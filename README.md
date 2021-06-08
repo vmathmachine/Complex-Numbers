@@ -18,7 +18,7 @@ Cpx, the Cpx class still has a short name, so it's not too much of a hassle to u
 
 #Example Code:
 
-``
+```
 Complex A=new Complex(2,1);  //declares A as the number 2+i
 Complex B=new Complex(-1,1); //declares B as the number -1+i
 
@@ -27,11 +27,11 @@ println(C.add(B)); //prints out their sum, which is 2+5i
 println(B, C);     //the add function did not alter B or C, so it should print out "-1+i 3+4i"
 println(C.addeq(B)); //once again prints out their sum, which is 2+5i
 println(B, C);     //the addeq function DID alter C, but not B, so it should print out "-1+i 2+5i"
-``
+```
 
-``
+```
 Complex A=Cpx.iTimes(Math.PI); //declares A as the number πi (note that this is slightly shorter than saying new Complex(0,Math.PI))
 println(A.exp().add(1));       //due to Euler's identity, e^(πi)+1=0.  Due to roundoff, this will not print out that, but will instead print out 1.224646799147E-16i
-``
+```
 
 As of right now, some of the functions still need to be made static because OOOPS, I messed up.  But, hopefully, that should be changed soon.
