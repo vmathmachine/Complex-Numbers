@@ -21,7 +21,7 @@ public class ComplexNumbers {
 
 	int myVariable = 0;
 	
-	public final static String VERSION = "1.0.0";
+	public final static String VERSION = "##library.prettyVersion##";
 	
 
 	/**
@@ -38,7 +38,7 @@ public class ComplexNumbers {
 	
 	
 	private void welcome() {
-		System.out.println("Complex Numbers 1.0.0 by Math Machine https://discourse.processing.org/u/math_machine/");
+		System.out.println("##library.name## ##library.prettyVersion## by ##author##");
 	}
 	
 	/**

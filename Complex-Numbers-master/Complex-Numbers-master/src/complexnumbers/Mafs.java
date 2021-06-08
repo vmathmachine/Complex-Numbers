@@ -8,17 +8,17 @@ public class Mafs {
 	public static double log2=0.6931471805599453D;
 	public static double Mascheroni=0.57721566490153286D;
 	
-	public Double Double(String string) {
+	public static Double Double(String string) {
 		if(string.equals("∞"))  { return  inf; } // ∞: return  ∞
 		if(string.equals("-∞")) { return -inf; } //-∞: return -∞
 		return new Double(string);               //otherwise, return the number
 	}
 	
-	public String unsplice(String s, int chop1, int chop2) { //this takes a string and returns the same string with everything between chop1 and chop2 removed
+	public static String unsplice(String s, int chop1, int chop2) { //this takes a string and returns the same string with everything between chop1 and chop2 removed
 		return s.substring(0, chop1) + s.substring(chop2, s.length());
 	}
 	
-	public String str(double dub) {  //this converts a double to a string, formatted so it doesn't have too many digits or any leading zeros
+	public static String str(double dub) {  //this converts a double to a string, formatted so it doesn't have too many digits or any leading zeros
 		
 		//first we check for some special cases:
 		if     (dub==0  ) { return "0";         } //if the number is 0, return "0" (this is specified to make sure "-0" isn't returned)
@@ -54,7 +54,7 @@ public class Mafs {
 		return res; //return the resulting string
 	}
 	
-	public double dPow(double d, int a) { //compute double d ^ integer a (exponentiation by squaring)
+	public static double dPow(double d, int a) { //compute double d ^ integer a (exponentiation by squaring)
 		if(a<0)  { return dPow(1/d,-a); } //a is negative: return (1/d)^(-a)
 		                                  //general case:
 	
@@ -75,5 +75,5 @@ public class Mafs {
 		return ans; //return the result
 	}
 	
-	public int sgn(double d) { return d>=0 ? 1 : -1; }
+	public static int sgn(double d) { return d>=0 ? 1 : -1; }
 }
