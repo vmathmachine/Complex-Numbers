@@ -2,6 +2,10 @@
 This library allows you to use double floating point complex numbers in an easy and computationally efficient manner.
 It was built specifically for Processing.js
 
+#Big note!!!
+I'm still really new to github and don't know yet how to make it easy for people to download this.  Sorry...
+
+
 The Mafs class allows for several key math functionalities and variables that aren't provided by default.  It contains functions for converting doubles to strings, a function
 for modular exponentiation for doubles, the signum function, and several fundamental math constants (such as ∞, π/2, e, and the Euler-Mascheroni constant).
 
