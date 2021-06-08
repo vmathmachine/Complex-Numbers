@@ -2,9 +2,20 @@
 This library allows you to use double floating point complex numbers in an easy and computationally efficient manner.
 It was built specifically for Processing.js
 
-#Big note!!!
-I'm still really new to github and don't know yet how to make it easy for people to download this.  Sorry...
+# How to Download
+Some of you probably already know this....I didn't.  So, I'm putting this down for those of you who also struggle with Github.  Also, just cuz the README file is supposed to tell you how to use the code...and if you can't download it, you can't use it...
 
+1. Make sure you have Processing downloaded on your system.
+2. Press the green dropdown "Code" button.  Press "Download ZIP".
+3. Once the ZIP is downloaded (presumably, it's in your Downloads folder.  If not, you'll have to look through your browser's settings to see where it sends downloads).  Now you have to unzip the file.  For Windows, you do that by right clicking and pressing "extract all".
+4. Right click the UNCOMPRESSED folder (the one that DOESN'T end in the .zip extension), hit "copy".
+5. If you have Processing open, close it.
+6. Go to your Processing folder.  Go to the libraries folder.
+7. In the libraries folder, hit paste (CTRL-V, or right-click + paste).
+8. Open Processing.  Hit import, libraries, then Complex Numbers.
+9. Make sure it works properly.  Try some of the example code below.
+
+# Details
 
 The Mafs class allows for several key math functionalities and variables that aren't provided by default.  It contains functions for converting doubles to strings, a function
 for modular exponentiation for doubles, the signum function, and several fundamental math constants (such as ∞, π/2, e, and the Euler-Mascheroni constant).
@@ -20,7 +31,7 @@ call "sin(number)" or "exp(number)" without having to prefix it with a class nam
 Cpx, the Cpx class still has a short name, so it's not too much of a hassle to use it as a prefix.
 
 
-#Example Code:
+# Example Code:
 
 ```
 Complex A=new Complex(2,1);  //declares A as the number 2+i
