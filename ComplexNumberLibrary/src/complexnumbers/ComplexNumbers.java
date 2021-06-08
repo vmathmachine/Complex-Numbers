@@ -1,4 +1,4 @@
-package template.library;
+package complexnumbers;
 
 
 import processing.core.*;
@@ -14,14 +14,14 @@ import processing.core.*;
  * @example Hello 
  */
 
-public class HelloLibrary {
+public class ComplexNumbers {
 	
 	// myParent is a reference to the parent sketch
 	PApplet myParent;
 
 	int myVariable = 0;
 	
-	public final static String VERSION = "##library.prettyVersion##";
+	public final static String VERSION = "1.0.0";
 	
 
 	/**
@@ -31,20 +31,16 @@ public class HelloLibrary {
 	 * @example Hello
 	 * @param theParent the parent PApplet
 	 */
-	public HelloLibrary(PApplet theParent) {
+	public ComplexNumbers(PApplet theParent) {
 		myParent = theParent;
 		welcome();
 	}
 	
 	
 	private void welcome() {
-		System.out.println("##library.name## ##library.prettyVersion## by ##author##");
+		System.out.println("Complex Numbers 1.0.0 by Math Machine https://discourse.processing.org/u/math_machine/");
 	}
 	
-	
-	public String sayHello() {
-		return "hello library.";
-	}
 	/**
 	 * return the version of the Library.
 	 * 
@@ -52,23 +48,6 @@ public class HelloLibrary {
 	 */
 	public static String version() {
 		return VERSION;
-	}
-
-	/**
-	 * 
-	 * @param theA the width of test
-	 * @param theB the height of test
-	 */
-	public void setVariable(int theA, int theB) {
-		myVariable = theA + theB;
-	}
-
-	/**
-	 * 
-	 * @return int
-	 */
-	public int getVariable() {
-		return myVariable;
 	}
 }
 
