@@ -40,7 +40,7 @@ public class Mafs {
 			res=String.format("%1.12E",dub); //format the number to 12 decimal places with scientific notation
 			cut2=res.indexOf("E");           //the coefficient ends right before the "E"
 			
-		    //before we move on to remove any trailing zeros, let's first remove any unecessary +s or 0s in the exponent
+		    //before we move on to remove any trailing zeros, let's first remove any unnecessary 0s in the exponent
 		    if(res.charAt(cut2+2)=='0') { res=unsplice(res,cut2+2,cut2+3); } //if there's a 0 after the "E+" or "E-", remove it
 		    //if(res.charAt(cut2+1)=='+') { res=unsplice(res,cut2+1,cut2+2); } //if there's a + after the "E", remove it
 		}
@@ -75,5 +75,20 @@ public class Mafs {
 		return ans; //return the result
 	}
 	
-	public static int sgn(double d) { return d>=0 ? 1 : -1; }
+	public static int sgn(double d) { if(d==0) { return 0; } return d>0 ? 1 : -1; } //return 0 if input is 0, else return sign
+	
+	public static double modPos(double d1, double d2) { //returns the mod, but never negative (except when d2 is negative)
+		double ret = d1%d2;                    //perform built-in mod
+		return (ret!=0 && (ret>=0 ^ d2>=0)) ? ret+d2 : ret; //if it's negative, make it positive
+	}
+	
+	
+	public static double[] fsinhcosh(double d) { //returns the cosh & sinh, computed simultaneously
+		if(Math.abs(d)<1E-4D) { double sq = d*d; return new double[] {d+d*sq/6, 1+0.5*sq+sq*sq/24}; } //small input: return Taylor's series
+		if(Math.abs(d)>20)    { double exp = Math.exp(d-log2); return new double[] {exp, d>0 ? exp : -exp}; } //large input: return +-e^(x-ln(2))
+		
+		double part = Math.exp(d); //regular input: compute e^d
+		double inv  = 1.0D/part;   //and e^-d
+		return new double[] {0.5*(part+inv), 0.5*(part-inv)}; //return their sum & difference (over 2)
+	}
 }
