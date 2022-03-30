@@ -1,6 +1,6 @@
 package complexnumbers;
 
-//////////////////////////////////////////////////////////COMPLEX CLASS////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////// COMPLEX CLASS ////////////////////////////////////////////////////////////////////////////////////////
 
 public class Complex extends Mafs { //this object represents a complex number
 	
@@ -8,25 +8,50 @@ public class Complex extends Mafs { //this object represents a complex number
 	
 	public double re, im; //there are only two members of this class: the real and imaginary parts
 	
-///////////////////////////////////////////////CONSTRUCTORS////////////////////////////////////
+/////////////////////////////////////////////// CONSTRUCTORS ////////////////////////////////////
 	
 	public Complex()                   { re=im=0;    } //default constructor
 	public Complex(double x, double y) { re=x; im=y; } //normal constructor, inputs of real and imaginary part
 	public Complex(double x)           { re=x; im=0; } //alternate constructor, inputs of real part with imaginary part assumed 0
 	
-//////////////////////////////////////////////BASIC FUNCTIONS/////////////////////////////////
+////////////////////////////////////////////// BASIC FUNCTIONS /////////////////////////////////
 	
-	public Complex copy()                     { return new Complex(re,im);     } //create deep copy
+	@Override
+	public Complex clone()                    { return new Complex(re,im);     } //create clone
+	public Complex copy ()                    { return new Complex(re,im);     } //create deep copy
 	
 	public void set(double x, double y)       { re=x;    im=y;                 } //assign components w/out copying reference
 	public void set(Complex z)                { re=z.re; im=z.im;              }
+	public void set(double x)                 { re=x;    im=0;                 }
+	public void setI(double y)                { re=0;    im=y;                 }
+	
+	public void setPolar(double r, double ang) { re=r*Math.cos(ang); im=r*Math.sin(ang); }
 	
 	public boolean equals(Complex z)          { return (re==z.re && im==z.im); } //test for equality
 	public boolean equals(double x, double y) { return (re==x    && im==y   ); }
 	public boolean equals(double x)           { return (re==x    && im==0   ); }
 	public boolean equalsI(double y)          { return (re==0    && im==y   ); } //test for equality w/ an imaginary number
 	
-/////////////////////////////////////////////CLASSIFYING NUMBERS/////////////////////////////
+	public boolean equalsPolar(double r, double ang) { return re==r*Math.cos(ang) && im==r*Math.sin(ang); }
+	
+	@Override
+	public boolean equals(Object o) { //test for equality with another object
+		if(o.getClass()==Complex.class) { return equals((Complex)o); }
+		return false;
+	}
+	
+	@Override
+	public int hashCode() { //returns the hash code
+		long x=Double.doubleToLongBits(re), y=Double.doubleToLongBits(im);
+		int result = 1;
+		result = 31*result + (int)(x>>32);
+		result = 31*result + (int)x;
+		result = 31*result + (int)(y>>32);
+		result = 31*result + (int)y;
+		return result;
+	}
+	
+///////////////////////////////////////////// CLASSIFYING NUMBERS /////////////////////////////
 	
 	public boolean isInf()     { return Math.abs(re)==inf || Math.abs(im)==inf; } //this is true if the complex number is infinite
 	public boolean isReal()    { return im==0;                     } //test for real
@@ -35,8 +60,9 @@ public class Complex extends Mafs { //this object represents a complex number
 	public boolean isWhole()   { return im==0 && re%1==0 && re>=0; } //whole number
 	public boolean isNatural() { return im==0 && re%1==0 && re> 0; } //natural number
 	
-////////////////////////////////////////////CAST TO A STRING////////////////////////////////
+//////////////////////////////////////////// CAST TO A STRING ////////////////////////////////
 	
+	@Override
 	public String toString() {                                            //Complex -> String
 		
 		if(isInf()) {                                           //special case: infinite input
@@ -62,7 +88,11 @@ public class Complex extends Mafs { //this object represents a complex number
 		return ret;                                                 //return the result
 	}
 	
-//////////////////////////////////////////////OBSCURE YET REALLY USEFUL FUNCTIONS//////////////////////////////////////////////
+	public String polarString() { //convert to a string, but written in polar notation
+		return str(abs())+" ∠ "+str(arg()); //absolute value, phaser, argument
+	}
+	
+////////////////////////////////////////////// OBSCURE YET REALLY USEFUL FUNCTIONS //////////////////////////////////////////////
 	
 	public double lazyabs() { //lazy absolute value (minimal cost size test, useful for testing overflow/underflow errors)
 		return Math.max(Math.abs(re),Math.abs(im)); //return the biggest of the two components
@@ -80,7 +110,14 @@ public class Complex extends Mafs { //this object represents a complex number
 	
 	public Complex abs2() { return mulsgn(this); } //secondary absolute value, return √(z²)
 	
-/////////////////////////////////////////////BASIC ARITHMETIC/////////////////////////////////////////////////
+	public Complex rotate(double ang) { //returns a rotated copy
+		double cos = Math.cos(ang), sin = Math.sin(ang); return new Complex(re*cos-im*sin,re*sin+im*cos);
+	}
+	public Complex rotateEq(double ang) { //rotates & returns
+		double cos = Math.cos(ang), sin = Math.sin(ang); set(re*cos-im*sin,re*sin+im*cos); return this;
+	}
+	
+///////////////////////////////////////////// BASIC ARITHMETIC /////////////////////////////////////////////////
 	
 	//create a new instance
 	
@@ -92,7 +129,18 @@ public class Complex extends Mafs { //this object represents a complex number
 		double rec=1.0D/a; return new Complex(re*rec, im*rec);                    //else, multiply each component by 1/a
 	}
 	
-	public Complex mulI(double a) { return new Complex(-im*a, re*a); } //...one imaginary double & one complex...
+	public Complex add(double x, double y) { return new Complex(re+x, im+y); } //...two double components & one complex...
+	public Complex sub(double x, double y) { return new Complex(re-x, im-y); } 
+	public Complex mul(double x, double y) { return new Complex(re*x-im*y, re*y+im*x); }
+	public Complex div(double x, double y) { return div(new Complex(x,y)); }
+	
+	public Complex addI(double a) { return new Complex(re, im+a);    } //...one imaginary double & one complex...
+	public Complex subI(double a) { return new Complex(re, im-a);    }
+	public Complex mulI(double a) { return new Complex(-im*a, re*a); }
+	public Complex divI(double a) {
+		if(Math.abs(a)<=5.562684646268E-309D) { return new Complex(im/a, -re/a); } //for small a, we divide each component by a
+		double rec=1.0D/a; return new Complex(im*rec, -re*rec);                    //else, multiply each component by 1/a
+	}
 	
 	public Complex add(Complex a) { return new Complex(re+a.re, im+a.im);                 } //...and for 2 Complexes
 	public Complex sub(Complex a) { return new Complex(re-a.re, im-a.im);                 }
@@ -106,7 +154,18 @@ public class Complex extends Mafs { //this object represents a complex number
 	public Complex muleq(Complex a) { set(re*a.re-im*a.im, re*a.im+im*a.re); return this; } // *=
 	public Complex diveq(Complex a) { return muleq(a.inv());                              } // /=
 	
+	public Complex addeq(double x, double y) { re+=x; im+=y;              return this; }
+	public Complex subeq(double x, double y) { re-=x; im-=y;              return this; }
+	public Complex muleq(double x, double y) { set(re*x-im*y, re*y+im*x); return this; }
+	public Complex diveq(double x, double y) { return diveq(new Complex(x,y));         }
+	
+	public Complex addeqI(double a) { im+=a;            return this;   }
+	public Complex subeqI(double a) { im-=a;            return this;   }
 	public Complex muleqI(double a) { set(-im*a, re*a); return this;   } // Complex *= double*i
+	public Complex diveqI(double a) {
+		if(Math.abs(a)<=5.562684646268E-309D) { set(im/a,-re/a); return this; }
+		return muleqI(-1.0D/a);
+	}
 	
 	public Complex addeq(double a) { re+=a;         return this; } // Complex+=double
 	public Complex subeq(double a) { re-=a;         return this; } // Complex-=double
@@ -116,7 +175,7 @@ public class Complex extends Mafs { //this object represents a complex number
 		return muleq(1.0D/a);
 	}
 	
-///////////////////////////////////////NEGATION AND OTHER SIMPLE OPERATIONS////////////////////////////////
+/////////////////////////////////////// NEGATION AND OTHER SIMPLE OPERATIONS ////////////////////////////////
 	
 	//new instance
 	public Complex neg () { return new Complex(-re,-im); } //negation
@@ -130,7 +189,10 @@ public class Complex extends Mafs { //this object represents a complex number
 	public Complex muleqI() { set(-im,  re); return this; } // *= i
 	public Complex diveqI() { set( im, -re); return this; } // /= i
 	
-///////////////////////////////////////POLAR OPERATIONS////////////////////////////////////////////////////
+/////////////////////////////////////// COMPLEX PARTS ////////////////////////////////////////////////////
+	
+	public double re() { return re; } //real part
+	public double im() { return im; } //imaginary part
 	
 	public double absq() { return re*re+im*im; } //absolute square
 	
@@ -152,7 +214,12 @@ public class Complex extends Mafs { //this object represents a complex number
 		return Math.atan2(im, re);                     //general case: find the angle with atan2
 	}
 	
-/////////////////////////////////////////RECIPROCAL, SQUARE ROOT, AND OTHER IMPORTANT FUNCTIONS////////////////////
+	public Complex sgn() { //signum
+		if(equals(0)) { return new Complex(); } //0: return 0
+		return div(abs());                      //otherwise: return this divided by the absolute value
+	} //NOTE: doesn't work with infinite numbers
+	
+///////////////////////////////////////// RECIPROCAL, SQUARE ROOT, AND OTHER IMPORTANT FUNCTIONS ////////////////////
 	
 	public Complex inv() {                       //reciprocal
 		if(im==0)   { return new Complex(1.0/re);    } //real      number: return  1/(real part)
@@ -259,7 +326,7 @@ public class Complex extends Mafs { //this object represents a complex number
 		return ln().muleq(a).exp();         //general case: return e to the power of the log times a
 	}
 	
-////////////////////ROUNDING & MODULOS////////////////////////////////////
+//////////////////// ROUNDING & MODULOS ////////////////////////////////////
 	
 	public double floor() { return Math.floor(re); }
 	public double ceil () { return Math.ceil(re);  }
@@ -277,4 +344,79 @@ public class Complex extends Mafs { //this object represents a complex number
 	}                                            //note, if two multiples are equally close, we default to the multiple corresponding to the lower integer (hence why a is negated)
 	
 	//when adding logarithms, you can use this tool (with "a" set to 2πi) to ensure the imaginary part is within the range (-π,π]
+	
+//////////////////// TRIGONOMETRY //////////////////////////////////////
+	
+	public Complex cosh() {                                                 //cosh
+		if(im==0) { return new Complex(Math.cosh(re)); } //real input: return cosh
+		if(re==0) { return new Complex(Math.cos (im)); } //imag input: return cos
+		
+		double[] sinhcosh=fsinhcosh(re);                 //compute sinh & cosh of real part
+		return new Complex(sinhcosh[1]*Math.cos(im),sinhcosh[0]*Math.sin(im)); //cosh(x+yi) = cosh(x)cos(y)+sinh(x)sin(y)i
+	}
+	
+	public Complex sinh() {                                                  //sinh
+		if(im==0) { return new Complex( Math.sinh(re)); } //real input: return sinh
+		if(re==0) { return new Complex(0,Math.sin(im)); } //imag input: return sin*i
+		
+		double[] sinhcosh=fsinhcosh(re);                  //compute sinh & cosh of real part
+		return new Complex(sinhcosh[0]*Math.cos(im),sinhcosh[1]*Math.sin(im)); //sinh(x+yi) = sinh(x)cos(y)+cosh(x)sin(y)i
+	}
+	public Complex tanh() {                                                     //tanh
+		if(im==0) 	 { return new Complex( Math.tanh(re)); } //real input: return tanh
+		if(re==0)    { return new Complex(0,Math.tan(im)); } //imag input: return tan*i
+		if(Math.abs(re)>20) { return new Complex(sgn(re)); } //large input: return +-1
+		
+		double[] sinhcosh=fsinhcosh(2*re);                   //compute sinh & cosh of twice the real part
+		double denom = 1.0D/(sinhcosh[1]+Math.cos(2*im));    //compute 1/(cosh(2x)+cos(2y))
+		return new Complex(sinhcosh[0]*denom, Math.sin(2*im)*denom); //tanh(x+yi) = (sinh(2x)+sin(2y)i)/(cosh(2x)+cos(2y))
+	}
+	
+	public Complex cos() { return mulI().cosh();          } //cos
+	public Complex sin() { return mulI().sinh().diveqI(); } //sin
+	public Complex tan() { return mulI().tanh().diveqI(); } //tan
+	
+	public Complex sec() { return cos().inv(); }  public Complex sech() { return cosh().inv(); } //sec & sech
+	public Complex csc() { return sin().inv(); }  public Complex csch() { return sinh().inv(); } //csc & csch
+	public Complex cot() { return tan().inv(); }  public Complex coth() { return tanh().inv(); } //cot & coth
+	
+//////////////////////////////////////////////////////////////////////////INVERSE TRIGONOMETRY////////////////////////////////////////////////////////////////////////////////////
+	
+	public Complex acosh() {                                                //arcosh
+		if(im==0&&Math.abs(re)<=1) { return new Complex(0,Math.acos(re)); } //real input [-1,1]: return acos*i
+		
+		if(absq()>1E18D) { return ln().addeq(log2); }           //huge input: return asymptotic approximation
+		
+		return add( sq().subeq(1).sqrt().muleqsgn(this) ).ln(); //else: return ln(z+csgn(z)√(z²-1))
+	}
+	public Complex asinh() {                                                //arsinh
+		if(re==0&&Math.abs(im)<=1) { return new Complex(0,Math.asin(im)); } //imag input [-i,i]: return asin*i
+		
+		if(absq()>1E18D) { return abs2().ln().addeq(log2).muleqsgn(this); } //huge input: return asymptotic approximation
+		if(lazyabs()<=1E-4D) { return mul(Cpx.sub(1,sq().div(6))); }        //tiny input: return taylor's series
+		
+		return (abs2().addeq( sq().add(1).sqrt() )).ln().muleqsgn(this); //else: return csgn(z)ln(|z|+√(z²+1))
+	}
+	public Complex atanh() {                                                               //artanh
+		if(im==0 && Math.abs(re)==1)           { return new Complex(re==1 ? inf : -inf); } //special case: atanh(±1)=±∞
+		if(isInf()) { return new Complex(0,(im>0 || im==0 && re<=1) ? HALFPI : -HALFPI); } //special case: z is infinite, return ±πi/2
+		
+		if(re==0)            { return new Complex(0,Math.atan(im)); } //imag input: return atan*i
+		if(lazyabs()<=1E-4D) { return mul(sq().div(3).addeq(1));    } //tiny input: return taylor's series
+		
+		Complex ans=(add(1).diveq(Cpx.sub(1,this))).ln().muleq(0.5D); //else      : atanh(z)=ln((1+z)/(1-z))/2
+		if(im==0&&re>1) { ans.im=-HALFPI; }                           //(special case) z is real & >1: negate im to keep function odd
+		return ans;                                                   //return answer
+	}
+	
+	public Complex acos() {                                                 //acos
+		if(im==0 && Math.abs(re)<=1) { return new Complex(Math.acos(re)); } //real input [-1,1]: return acos
+		return mulI().asinh().muleqI().addeq(HALFPI);                       //else             : return π/2-asin
+	}
+	public Complex asin() { return mulI().asinh().diveqI(); } //asin
+	public Complex atan() { return mulI().atanh().diveqI(); } //atan
+	
+	public Complex asec() { return inv().acos(); }  public Complex asech() { return inv().acosh(); } //asec and asech
+	public Complex acsc() { return inv().asin(); }  public Complex acsch() { return inv().asinh(); } //acsc and acsch
+	public Complex acot() { return inv().atan(); }  public Complex acoth() { return inv().atanh(); } //acot and acoth
 }
