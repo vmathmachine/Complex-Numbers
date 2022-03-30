@@ -16,11 +16,10 @@ Some of you probably already know this....I didn't.  So, I'm putting this down f
 6. If you have Processing open, close it.
 7. Go to your Processing sketchbook folder (the folder containing all of your current processing sketches).  Go to the libraries folder.
 8. In the libraries folder, hit paste (CTRL+V, or right-click + paste).
-9. (required for Processing 4, optional for Processing 3).  From here, enter the newly pasted "ComplexNumberLibrary" folder in your sketchbook.  Then, enter the folder named "library".  Finally, SINGLE-click on the core.jar file, and hit delete.  This file is a redundant copy of Processing's source code, and is only included so I can make changes in Eclipse.  It is unnecessary in Processing 3, and is outright forbidden in Processing 4.
-10. Open Processing.  Hit import (at the top), libraries, then Complex Numbers.
-11. Make sure it works properly.  Try some of the example code below.
+9. Open Processing.  Hit import (at the top), libraries, then Complex Numbers.
+10. Make sure it works properly.  Try some of the example code below.
 
-12. Once you've made sure your library is fully functional, feel free to delete the ZIP file from your downloads folder.  As well as any other copies of this library that haven't been moved to the Processing sketchbook.  This step is optional, of course.
+11. Once you've made sure your library is fully functional, feel free to delete the ZIP file from your downloads folder.  As well as any other copies of this library that haven't been moved to the Processing sketchbook.  This step is optional, of course.
 
 # Details
 
