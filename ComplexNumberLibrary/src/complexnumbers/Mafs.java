@@ -89,6 +89,6 @@ public class Mafs {
 		
 		double part = Math.exp(d); //regular input: compute e^d
 		double inv  = 1.0D/part;   //and e^-d
-		return new double[] {0.5*(part+inv), 0.5*(part-inv)}; //return their sum & difference (over 2)
+		return new double[] {0.5*(part-inv), 0.5*(part+inv)}; //return their sum & difference (over 2)
 	}
 }
