@@ -5,6 +5,8 @@ It was built specifically for Processing.js.
 The source code is heavily commented, and if you wanna look at it yourself, by all means! :)
 If you see something that doesn't quite make sense, you might be able to find more information on the wiki I wrote.
 
+This library has been successfully been tested on Windows 10 and Linux Mint (an Ubuntu based distro).  I see no reason why it shouldn't run on Mac OS or on earlier (or later) versions of Windows, but cannot guarantee it will.
+
 # How to Download
 Some of you probably already know this....I didn't.  So, I'm putting this down for those of you who also struggle with Github.  Also, just cuz the README file is supposed to tell you how to use the code...and if you can't download it, you can't use it...
 
