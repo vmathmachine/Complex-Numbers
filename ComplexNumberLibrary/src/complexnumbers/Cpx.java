@@ -2,17 +2,57 @@ package complexnumbers;
 
 import java.util.ArrayList;
 
-public class Cpx extends Complex {
+//Don't be intimidated by the line count.  Without javadoc comments, it's only about 200 lines.
+
+/**
+ * A collection of utilities for complex numbers that can't be called as <code>Complex</code> instance methods.
+ * 
+ * @author Math Machine
+ * @version 1.0.0
+ */
+
+public class Cpx extends Mafs {
 	
 ////////////////EXTERNAL CONSTRUCTORS//////////////////////
 	
-	public static Complex zero()            { return new Complex();    } //create instance of  0+0i
-	public static Complex one ()            { return new Complex(1);   } //create instance of  1+0i
-	public static Complex mOne()            { return new Complex(-1);  } //create instance of -1+0i
-	public static Complex two ()            { return new Complex(2);   } //create instance of  2+0i
-	public static Complex Complex(double d) { return new Complex(d);   } //create instance of  d+0i (cast double to Complex)
+	/**
+	 * Returns the number 0
+	 * @return the complex number 0+0i
+	 */
+	public static Complex zero() { return new Complex(); } //create instance of  0+0i
+	/**
+	 * Returns the number 1
+	 * @return the complex number 1+0i
+	 */
+	public static Complex one () { return new Complex(1); } //create instance of  1+0i
+	/**
+	 * Returns the number -1
+	 * @return the complex number -1+0i
+	 */
+	public static Complex mOne() { return new Complex(-1); } //create instance of -1+0i
+	/**
+	 * Returns the number 2
+	 * @return the complex number 2+0i
+	 */
+	public static Complex two () { return new Complex(2); } //create instance of  2+0i
+	/**
+	 * Casts a double to a complex
+	 * @param d the double
+	 * @return d+0i
+	 */
+	public static Complex Complex(double d) { return new Complex(d); } //create instance of  d+0i (cast double to Complex)
+	/**
+	 * Creates an imaginary number
+	 * @param d the imaginary part
+	 * @return 0+di
+	 */
 	public static Complex iTimes (double d) { return new Complex(0,d); } //create instance of  0+di
 	
+	/**
+	 * Casts a string to a complex (invalid configuration returns NaN)
+	 * @param s the complex as a string
+	 * @return the complex number
+	 */
 	public static Complex Complex(String s) { //convert a String to a Complex number
 		int numPlusMinus=0; //first, we have to count the number of plus or minuses (with some exceptions)
 		int separator = -1; //if there's only 1, this'll be used to record the position of that one
@@ -62,60 +102,220 @@ public class Cpx extends Complex {
   		return result; //otherwise, return result
 	}
 	
+	/**
+	 * Constructs a complex number in polar notation
+	 * @param r the absolute value
+	 * @param ang the argument
+	 * @return the complex number
+	 */
 	public static Complex polar(double r, double ang) { return new Complex(r*Math.cos(ang),r*Math.sin(ang)); } //constructs a number w/ polar notation
 	
 	//we will now overload (most of) the functions from complex so that the complex numbers can be called as parameters
 	
+	/**
+	 * Casts a complex to a string
+	 * @param z complex input
+	 * @return the string
+	 */
 	public static String str(Complex z) { return z.toString(); } //this generates the complex number in text form
 	
 ///////////////COMPLEX PARTS///////////////////////////
+	/**
+	 * Real part
+	 * @param z complex input
+	 * @return the real part
+	 */
 	public static double re(Complex z) { return z.re; } //real & imaginary parts
+	/**
+	 * Imaginary part
+	 * @param z complex input
+	 * @return the imaginary part
+	 */
 	public static double im(Complex z) { return z.im; }
 	
+	/**
+	 * The absolute square (absolute value squared)
+	 * @param z complex input
+	 * @return absolute square
+	 */
 	public static double absq(Complex z) { return z.absq(); } //square absolute value
+	/**
+	 * The absolute value
+	 * @param z complex input
+	 * @return absolute value
+	 */
 	public static double abs (Complex z) { return z.abs();  } //absolute value
+	/**
+	 * Polar argument
+	 * @param z complex input
+	 * @return argument
+	 */
 	public static double arg (Complex z) { return z.arg();  } //polar argument
 	
+	/**
+	 * Complex conjugate
+	 * @param z complex input
+	 * @return complex conjugate
+	 */
 	public static Complex conj(Complex z) { return z.conj(); } //complex conjugate
 	
-////////////////BASIC ARITHMETIC//////////////////////
+//////////////// BASIC ARITHMETIC //////////////////////
 	
-	public static Complex add(Complex a, double b) { return a.add(b); } //these functions perform the four basic arithmetic
-	public static Complex sub(Complex a, double b) { return a.sub(b); } //operations on one real and one complex number
-	public static Complex mul(Complex a, double b) { return a.mul(b); }
-	public static Complex div(Complex a, double b) { return a.div(b); }
-	
-	public static Complex add(double a, Complex b) { return b.add(a);         } //these functions perform the four basic arithmetic
-	public static Complex sub(double a, Complex b) { return b.neg().addeq(a); } //operations on one real and one complex number
-	public static Complex mul(double a, Complex b) { return b.mul(a);         }
-	public static Complex div(double a, Complex b) { return inv(b).muleq(a);  }
-	
+	/**
+	 * Adds two complexes
+	 * @param a complex addend (a number we add)
+	 * @param b complex addend
+	 * @return sum
+	 */
 	public static Complex add(Complex a, Complex b) { return a.add(b); } //these functions perform the four basic arithmetic
+	/**
+	 * Subtracts two complexes
+	 * @param a complex minuend (the number we subtract from)
+	 * @param b complex subtrahend (the number we subtract)
+	 * @return difference
+	 */
 	public static Complex sub(Complex a, Complex b) { return a.sub(b); } //operations on two complex numbers
+	/**
+	 * Multiplies two complexes
+	 * @param a complex multiplicand (the first number in a multiplication)
+	 * @param b complex multiplier (the second number in a multiplication)
+	 * @return product
+	 */
 	public static Complex mul(Complex a, Complex b) { return a.mul(b); }
+	/**
+	 * Divides two complexes
+	 * @param a complex dividend (the first number in a division)
+	 * @param b complex divisor (the number we divide by)
+	 * @return quotient
+	 */
 	public static Complex div(Complex a, Complex b) { return a.div(b); }
 	
+	/**
+	 * Adds a complex to a double
+	 * @param a complex addend
+	 * @param b real addend
+	 * @return sum
+	 */
+	public static Complex add(Complex a, double b) { return a.add(b); } //these functions perform the four basic arithmetic
+	/**
+	 * Subtracts a double from a complex
+	 * @param a complex minuend
+	 * @param b real subtrahend
+	 * @return difference
+	 */
+	public static Complex sub(Complex a, double b) { return a.sub(b); } //operations on one real and one complex number
+	/**
+	 * Multiplies a complex by a double
+	 * @param a complex multiplicand
+	 * @param b real multiplier
+	 * @return product
+	 */
+	public static Complex mul(Complex a, double b) { return a.mul(b); }
+	/**
+	 * Divides a complex by a double
+	 * @param a complex dividend
+	 * @param b real divisor
+	 * @return quotient
+	 */
+	public static Complex div(Complex a, double b) { return a.div(b); }
+	
+	/**
+	 * Adds a double to a complex
+	 * @param a real addend
+	 * @param b complex addend
+	 * @return sum
+	 */
+	public static Complex add(double a, Complex b) { return b.add(a);         } //these functions perform the four basic arithmetic
+	/**
+	 * Subtracts a complex from a double
+	 * @param a real minuend
+	 * @param b complex subtrahend
+	 * @return difference
+	 */
+	public static Complex sub(double a, Complex b) { return b.neg().addeq(a); } //operations on one real and one complex number
+	/**
+	 * Multiplies a double by a complex
+	 * @param a real multiplicand
+	 * @param b complex multiplier
+	 * @return product
+	 */
+	public static Complex mul(double a, Complex b) { return b.mul(a);         }
+	/**
+	 * Divides a double by a complex
+	 * @param a real dividend
+	 * @param b complex divisor
+	 * @return quotient
+	 */
+	public static Complex div(double a, Complex b) { return inv(b).muleq(a);  }
+	
+	/**
+	 * Returns the input negated
+	 * @param z complex input
+	 * @return negated copy
+	 */
 	public static Complex neg(Complex z) { return z.neg(); }
 	
+	/**
+	 * Adds 2 complexes and one real
+	 * @param a First complex addend
+	 * @param b Second complex addend
+	 * @param c Third real addend
+	 * @return sum
+	 */
 	public static Complex add(Complex a, Complex b, double c) { return a.add(b).addeq(c); } //3 input add (with doubles)
+	/**
+	 * Multiplies 2 complexes and one real
+	 * @param a First complex input
+	 * @param b Second complex input
+	 * @param c Third real input
+	 * @return product
+	 */
 	public static Complex mul(Complex a, Complex b, double c) { return a.mul(b).muleq(c); } //3 input multiply (with doubles)
 	
+	/**
+	 * Adds an indefinite number of complex numbers
+	 * @param a First complex addend
+	 * @param b Second complex addend
+	 * @param c The rest of the complex addends
+	 * @return Their collective sum
+	 */
 	public static Complex add(Complex a, Complex b, Complex... c) { //unlimited input sum (all Complex)
 		Complex ret=a.add(b);                 //add initial two inputs
 		for(Complex c2: c) { ret.addeq(c2); } //add equal all other inputs
 		return ret;                           //return the result
 	}
+	/**
+	 * Multiplies an indefinite number of complex numbers
+	 * @param a First complex input
+	 * @param b Second complex input
+	 * @param c The rest of the complex inputs
+	 * @return Their collective product
+	 */
 	public static Complex mul(Complex a, Complex b, Complex... c) { //unlimited input multiply (all Complex)
 		Complex ret=a.mul(b);                 //multiply initial two inputs
 		for(Complex c2: c) { ret.muleq(c2); } //multiply equal all other inputs
 		return ret;                           //return the result
 	}
 	
+	/**
+	 * Adds one real to an indefinite number of complexes
+	 * @param a First real addend
+	 * @param b Second complex addend
+	 * @param c The rest of the complex addends
+	 * @return Their collective sum
+	 */
 	public static Complex add(double a, Complex b, Complex... c) { //unlimited input sum (1 double + n Complex)
 		Complex ret=b.add(a);                 //add initial 2 inputs
 		for(Complex c2: c) { ret.addeq(c2); } //add equal all other inputs
 		return ret;                           //return the result
 	}
+	/**
+	 * Multiplies one real by an indefinite number of complexes
+	 * @param a First real input
+	 * @param b Second complex input
+	 * @param c The rest of the complex inputs
+	 * @return Their collective product
+	 */
 	public static Complex mul(double a, Complex b, Complex... c) { //unlimited input multiply (1 double * n Complex)
 		Complex ret = b.mul(a);               //multiply initial two inputs
 		for(Complex c2: c) { ret.muleq(c2); } //multiply equal all other inputs
@@ -124,29 +324,111 @@ public class Cpx extends Complex {
 	
 ////////////////RECIPROCAL, SQUARE ROOT, & OTHER IMPORTANT FUNCTIONS////////////
 	
+	/**
+	 * The inverse or reciprocal of the input
+	 * @param z complex input
+	 * @return inverse
+	 */
 	public static Complex inv (Complex z) { return z.inv();  } //1/z
+	/**
+	 * The square of the input
+	 * @param z complex input
+	 * @return z²
+	 */
 	public static Complex sq  (Complex z) { return z.sq();   } //z²
+	/**
+	 * The cube of the input
+	 * @param z complex input
+	 * @return z³
+	 */
 	public static Complex cub (Complex z) { return z.cub();  } //z cubed
 	
+	/**
+	 * The square root of the input
+	 * @param z complex input
+	 * @return √z
+	 */
 	public static Complex sqrt(Complex z) { return z.sqrt(); } //√(z)
+	/**
+	 * The cube root of the input
+	 * @param z complex input
+	 * @return ∛z
+	 */
 	public static Complex cbrt(Complex z) { return z.cbrt(); } //cbrt(z)
+	/**
+	 * e (Euler's number) raised to the power of the input
+	 * @param z complex input
+	 * @return the exponential
+	 */
 	public static Complex exp(Complex z)  { return z.exp();  } //e^z
+	/**
+	 * Natural logarithm of the input
+	 * @param z complex input
+	 * @return the natural logarithm
+	 */
 	public static Complex ln(Complex z)   { return z.ln();   } //ln(z)
 	
+	/**
+	 * Common (base 10) logarithm of the input
+	 * @param z complex input
+	 * @return the common logarithm
+	 */
 	public static Complex log10(Complex z) { return z.ln().muleq(0.434294481903251828D); } //base 10 log...for anyone who wanted that
 	
+	/**
+	 * Complex raised to the power of an integer
+	 * @param a complex base
+	 * @param b integer exponent
+	 * @return result
+	 */
 	public static Complex pow(Complex a, int     b) { return a.pow(b); } //this computes a to the power of an integer
+	/**
+	 * Complex raised to the power of a real number
+	 * @param a complex base
+	 * @param b real exponent
+	 * @return result
+	 */
 	public static Complex pow(Complex a, double  b) { return a.pow(b); } //this computes a to the power of a real double
+	/**
+	 * Complex raised to the power of a complex
+	 * @param a complex base
+	 * @param b complex exponent
+	 * @return result
+	 */
 	public static Complex pow(Complex a, Complex b) { return a.pow(b); } //this computes a to the power of another complex number
 	
+	
+	/**
+	 * Wrapper class used to hold integers so they can be passed by reference
+	 * 
+	 * @author chris
+	 */
 	private static class Wrapper { int in; Wrapper(int i) { in=i; } }
 	
+	/**
+	 * Logarithm offset: Returns ( (sum of ln(each input)) - (ln(product of each input)) ) / (2πi).
+	 * 
+	 * You see, if you add together the logarithms of several positive real numbers, that's the same as multiplying those numbers
+	 * together and taking the logarithm of their product.  However, the same can't be said for negative or complex numbers.  Technically,
+	 * the sum will be <em>a</em> logarithm of the product, but it won't necessarily be the principal value of that logarithm.  However,
+	 * a fundamental rule of complex numbers is that all non-zero numbers have an infinite number of natural logarithms, and if you
+	 * subtract any two of those logarithms, you'll get an integer multiple of 2πi.  This function simply answers the question "what is
+	 * that integer multiple?"  And it does so without performing any logarithms.
+	 * @param z each complex input
+	 * @return the logarithm offset
+	 */
 	public static int logOffset(Complex... z) { //the difference of the sum of logs and the log of the product (over 2πi)
 		ArrayList<Complex> inp = new ArrayList<Complex>();
 		for(Complex c : z) { inp.add(c); }                   //convert array to arraylist
 		return recursiveLogOffset(new Wrapper(0),one(),inp); //use private function to compute the offset
 	}
 	
+	/**
+	 * Returns the sum of the logarithms of each complex input.  It does this by computing the product, taking the logarithm, adding
+	 * 2πi times the log offset, and performing some overflow/underflow corrections along the way.
+	 * @param z each complex input
+	 * @return the sum of their logarithms
+	 */
 	public static Complex logSum(Complex... z) {
 		ArrayList<Complex> inp = new ArrayList<Complex>();
 		for(Complex c : z) { inp.add(c); } //convert array to arraylsit
@@ -162,6 +444,16 @@ public class Cpx extends Complex {
 		return ln; //return the result
 	}
 	
+	/**
+	 * For a set of complex inputs, this gives us the logarithm offset, the product of the inputs, and the number of times we overflowed
+	 * minus the number of times we underflowed while performing this calculation.  This function is private because the wrapper class
+	 * is private and because the information we gain from it has to be interpreted properly
+	 * 
+	 * @param change the # of times we overflowed - the # of times we underflowed (updated at the end of each iteration)
+	 * @param prod the product (adjusted for overflow / underflow)
+	 * @param z the set of complex inputs
+	 * @return the logarithm offset of those inputs
+	 */
 	private static int recursiveLogOffset(Wrapper change, Complex prod, ArrayList<Complex> z) {
 		switch(z.size()) {        //return depends on # of inputs
 		case 0: case 1: return 0; //0 or 1 inputs: no difference
@@ -197,20 +489,91 @@ public class Cpx extends Complex {
 		}
 	}
 	
-//////////////////////////////////////////////////////////////////////////////////TRIGONOMETRY////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////// TRIGONOMETRY ////////////////////////////////////////////////////////////////////////////////////
 	
+	/**
+	 * Hyperbolic cosine
+	 * @param z complex input
+	 * @return cosh
+	 */
 	public static Complex cosh(Complex z) { return z.cosh(); } //cosh
+	/**
+	 * Hyperbolic sine
+	 * @param z complex input
+	 * @return sinh
+	 */
 	public static Complex sinh(Complex z) { return z.sinh(); } //sinh
+	/**
+	 * Hyperbolic tangent
+	 * @param z complex input
+	 * @return tanh
+	 */
 	public static Complex tanh(Complex z) { return z.tanh(); } //tanh
 	
+	/**
+	 * Cosine
+	 * @param z complex input
+	 * @return cos
+	 */
 	public static Complex cos(Complex z) { return z.cos(); } //cos
+	/**
+	 * Sine
+	 * @param z complex input
+	 * @return sin
+	 */
 	public static Complex sin(Complex z) { return z.sin(); } //sin
+	/**
+	 * Tangent
+	 * @param z complex input
+	 * @return tan
+	 */
 	public static Complex tan(Complex z) { return z.tan(); } //tan
 	
-	public static Complex sec(Complex z) { return z.sec(); }  public static Complex sech(Complex z) { return z.sech(); } //sec and sech
-	public static Complex csc(Complex z) { return z.csc(); }  public static Complex csch(Complex z) { return z.csch(); } //csc and csch
-	public static Complex cot(Complex z) { return z.cot(); }  public static Complex coth(Complex z) { return z.coth(); } //cot and coth
+	/**
+	 * Secant
+	 * @param z complex input
+	 * @return sec
+	 */
+	public static Complex sec(Complex z) { return z.sec(); } //sec
+	/**
+	 * Cosecant
+	 * @param z complex input
+	 * @return csc
+	 */
+	public static Complex csc(Complex z) { return z.csc(); } //csc
+	/**
+	 * Cotangent
+	 * @param z complex input
+	 * @return cot
+	 */
+	public static Complex cot(Complex z) { return z.cot(); } //cot
 	
+	/**
+	 * Hyperbolic secant
+	 * @param z complex input
+	 * @return sech
+	 */
+	public static Complex sech(Complex z) { return z.sech(); } //sech
+	/**
+	 * Hyperbolic cosecant
+	 * @param z complex input
+	 * @return csch
+	 */
+	public static Complex csch(Complex z) { return z.csch(); } //csch
+	/**
+	 * Hyperbolic cotangent
+	 * @param z complex input
+	 * @return coth
+	 */
+	public static Complex coth(Complex z) { return z.coth(); } //coth
+	
+	/**
+	 * The Gudermannian function.  It's a useful function such that the sinh, cosh, tanh, sech, csch, and coth of the input is equal to
+	 * the tan, sec, sin, cos, cot, and csc (respectively) of the output.  This can be handy when evaluating certain integrals.  It's
+	 * also equal to the antiderivative of the hyperbolic secant (sech) function.
+	 * @param z complex input
+	 * @return Gudermannian function
+	 */
 	public static Complex gd(Complex z) { //Gudermannian function
 		//first, the special cases. If the input is too close to one of the poles, we have to use an approximation
 		Complex z2 = z.mod_v2(iTimes(2*Math.PI)); //take a modulo with 2πi
@@ -225,26 +588,108 @@ public class Cpx extends Complex {
 	
 //////////////////////////////////////////////////////////////////////////INVERSE TRIGONOMETRY////////////////////////////////////////////////////////////////////////////////////
 	
+	/**
+	 * Inverse hyperbolic cosine, also known as area hyperbolic cosine
+	 * @param z complex input
+	 * @return acosh
+	 */
 	public static Complex acosh(Complex z) { return z.acosh(); } //arcosh
+	/**
+	 * Inverse hyperbolic sine, also known as area hyperbolic sine
+	 * @param z complex input
+	 * @return asinh
+	 */
 	public static Complex asinh(Complex z) { return z.asinh(); } //arsinh
+	/**
+	 * Inverse hyperbolic tangent, also known as area hyperbolic tangent
+	 * @param z complex input
+	 * @return atanh
+	 */
 	public static Complex atanh(Complex z) { return z.atanh(); } //artanh
 	
+	/**
+	 * Inverse cosine, also known as arc cosine
+	 * @param z complex input
+	 * @return acos
+	 */
 	public static Complex acos(Complex z) { return z.acos(); } //acos
+	/**
+	 * Inverse sine, also known as arc sine
+	 * @param z complex input
+	 * @return asin
+	 */
 	public static Complex asin(Complex z) { return z.asin(); } //asin
+	/**
+	 * Inverse tangent, also known as arc tangent
+	 * @param z complex input
+	 * @return atan
+	 */
 	public static Complex atan(Complex z) { return z.atan(); } //atan
 	
-	public static Complex asec(Complex z) { return z.asec(); }  public static Complex asech(Complex z) { return z.asech(); } //asec and asech
-	public static Complex acsc(Complex z) { return z.acsc(); }  public static Complex acsch(Complex z) { return z.acsch(); } //acsc and acsch
-	public static Complex acot(Complex z) { return z.acot(); }  public static Complex acoth(Complex z) { return z.acoth(); } //acot and acoth
+	/**
+	 * Inverse / arc secant
+	 * @param z complex input
+	 * @return asec
+	 */
+	public static Complex asec(Complex z) { return z.asec(); } //asec
+	/**
+	 * Inverse / arc cosecant
+	 * @param z complex input
+	 * @return acsc
+	 */
+	public static Complex acsc(Complex z) { return z.acsc(); } //acsc
+	/**
+	 * Inverse / arc cotangent
+	 * @param z complex input
+	 * @return acot
+	 */
+	public static Complex acot(Complex z) { return z.acot(); } //acot
 	
+	/**
+	 * Inverse / area hyperbolic secant
+	 * @param z complex input
+	 * @return asech
+	 */
+	public static Complex asech(Complex z) { return z.asech(); } //asech
+	/**
+	 * Inverse / area hyperbolic cosecant
+	 * @param z complex input
+	 * @return acsch
+	 */
+	public static Complex acsch(Complex z) { return z.acsch(); } //acsch
+	/**
+	 * Inverse / area hyperbolic cotangent
+	 * @param z complex input
+	 * @return acoth
+	 */
+	public static Complex acoth(Complex z) { return z.acoth(); } //acoth
+	
+	/**
+	 * Inverse Gudermannian function.  It's a useful function such that the sin, cos, tan, sec, csc, and cot of the input is equal to the
+	 * tanh, sech, sinh, cosh, coth, and csch (respectively) of the output.  This can be handy when evaluating certain integrals.  It's
+	 * also equal to the antiderivative of the secant (sec) function.
+	 * @param z complex input
+	 * @return Inverse Gudermannian function
+	 */
 	public static Complex invGd(Complex z) { //inverse Gudermannian function
 		return gd(z.mulI()).diveqI();        //as it turns out, the inverse is just the gd, but with z*i and divided by i
 	}                                        //gd : invGd :: sin : sinh
 	
 ////////////////////////////////////////////////// GAMMA FUNCTIONS ////////////////////////////////////////////////
 	
+	/**
+	 * The Gamma function: Denoted Γ(z), it's equivalent to (z-1)! for all integer values of z.  It's special because it follows several
+	 * identities, such as Γ(z+1) = z*Γ(z) and Γ(z)Γ(1-z) = πcsc(πz), and because it can be used to evaluate a wide multitude of
+	 * definite integrals.  This library calculates the Gamma function using the Lanczos Approximation, a highly efficient approximation
+	 * that combines asymptotic behavior with harmonic sums to give an accurate approximation for IEEE double floating points.  For
+	 * even better accuracy, when the input is an integer between 1 and 21, the gamma function is evaluated as (a-1)! using
+	 * repeated multiplication.
+	 * @param a complex input
+	 * @return Γ(a)
+	 */
 	public static Complex gamma(Complex a) { //this returns the gamma function of complex input a using the Lanczos approximation
 		
+		//////// INTEGER INPUTS ////////
 		if(a.im==0 && a.re%1==0 && a.re<22) { //if the input is an integer, we can just solve via repeated multiplication
 			
 			if(a.re<=0) { return new Complex((a.re%2==0) ? inf:-inf); } //if it's negative or 0, the result will just be ±∞
@@ -254,9 +699,11 @@ public class Cpx extends Complex {
 			return new Complex((double)prod);      //and return the result
 		}
 		
+		//////// LARGE INPUTS /////////
 		if(a.re<-170.6243769563027) { return zero();           } //if the input is too negative (and it's not an integer), it's an underflow error, return 0
 		if(a.re> 171.6243769563027) { return new Complex(inf); } //if the input is too positive, it's an overflow error, return ∞
 		
+		//////// NORMAL CASE /////////
 		double[] coef={676.5203681218851D,  -1259.1392167224028D,  771.32342877765313D,   -176.61502916214059D,
                        12.507343278686905D, -0.13857109526572012D, 9.9843695780195716e-6D, 1.5056327351493116e-7D}; //this is a list of coefficients for the Lanczos approximation
 		
@@ -266,18 +713,20 @@ public class Cpx extends Complex {
 		
 		Complex sum=new Complex(0.99999999999980993D); //this approximation requires doing a summation
 		for(int n=0;n<coef.length;n++) {               //loop through the list of coefficients
-			sum.addeq(div(coef[n],b.add(n)));            //each term in the summation is the coefficient divided by (the input plus the index)
+			sum.addeq(div(coef[n],b.add(n)));          //each term in the summation is the coefficient divided by (the input plus the index)
 		}
-		Complex t=b.add(6.5); //set value t to store the input minus 6.5
+		Complex t=b.add(6.5);                                                    //set value t to store the input minus 6.5
 		sum.muleq(pow(t,b.sub(0.5)).mul(exp(t.neg())).mul(2.5066282746310005D)); //multiply the sum by √(2π)t^(b-0.5)e^(-t)
 		
+		///////// LARGE INPUT, NON-OVERFLOW OUTPUT ////////////////
 		if(a.re>142 || a.re<-141) { //if the input is too large,
 			int diff=(int)( ((a.re>0)?a.re:1-a.re) -b.re); //this is the difference between b and a (or 1-a)
 			for(int n=0;n<diff;n++) { //loop through all numbers between b and a (or 1-a)
-				sum.muleq(b.add(n));    //multiply each number in between
+				sum.muleq(b.add(n));  //multiply each number in between
 			}
 		}
 		
+		///////// NEGATIVE INPUTS ///////////
 		if(a.re<0) { //use reflection formula for negative inputs
 			sum=div(Math.PI,sin(a.mul(Math.PI)).mul(sum));
 		}
@@ -285,5 +734,11 @@ public class Cpx extends Complex {
 		return sum; //return the result
 	}
 	
+	/**
+	 * The factorial function, extended to complex number inputs.  The input does not need to be an integer, or even a real number for
+	 * that matter.
+	 * @param z complex input
+	 * @return z!
+	 */
 	public static Complex factorial(Complex z) { return gamma(z.add(1)); }
 }
