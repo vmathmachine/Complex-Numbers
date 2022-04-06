@@ -1,7 +1,7 @@
 package complexnumbers;
 
 
-import processing.core.*;
+//import processing.core.*;
 
 /**
  * This is a template class and can be used to start a new processing Library.
@@ -16,38 +16,16 @@ import processing.core.*;
 
 public class ComplexNumbers {
 	
-	// myParent is a reference to the parent sketch
-	PApplet myParent;
-
-	int myVariable = 0;
-	
-	public final static String VERSION = "1.0.0";
-	
-
 	/**
-	 * a Constructor, usually called in the setup() method in your sketch to
-	 * initialize and start the Library.
-	 * 
-	 * @example Hello
-	 * @param theParent the parent PApplet
+	 * The current version of the Library.
 	 */
-	public ComplexNumbers(PApplet theParent) {
-		myParent = theParent;
-		welcome();
-	}
-	
-	
-	private void welcome() {
-		System.out.println("Complex Numbers 1.0.0 by Math Machine https://discourse.processing.org/u/math_machine/");
-	}
+	public final static String VERSION = "##library.prettyVersion##";
 	
 	/**
-	 * return the version of the Library.
-	 * 
-	 * @return String
+	 * Returns the version of the Library.
+	 * @return Library as a string
 	 */
 	public static String version() {
 		return VERSION;
 	}
 }
-
