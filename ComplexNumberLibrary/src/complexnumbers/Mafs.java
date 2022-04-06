@@ -1,23 +1,62 @@
 package complexnumbers;
 
+/**
+ * 
+ * This class is used to hold certain mathematical constants, operations, and functions that will be useful for the <code>Complex</code> class.
+ * 
+ * @author Math Machine
+ * @version 1.0.0
+ */
+
 public class Mafs {
+	/////////////////// CONSTANTS ///////////////////
+	
+	/** Positive infinity */
 	public static double inf=1.0D/0;
+	/** Euler's Number */
 	public static double e=2.71828182845904524D;
+	/** π/2 */
 	public static double HALFPI=1.57079632679489662D;
+	/** √(2) */
+	public static double ROOT2=1.41421356237309505D;
+	/** √(π)/2.  Will be used in calculation of the <code>erf</code> function */
 	public static double ROOTPI2=0.886226925452758D;
+	/** ln(2) */
 	public static double log2=0.6931471805599453D;
+	/** The Euler-Mascheroni constant.
+	 *  It's just called Mascheroni because, despite the push by mathematicians, it will never just be called "Euler's constant".
+	 */
 	public static double Mascheroni=0.57721566490153286D;
 	
+	/////////////////// STRING BASED STUFF ///////////////////
+	
+	/**
+	 * Casts strings to a double, but also accepts ∞ and -∞.  Still has yet to be used.
+	 * @param string the input string
+	 * @return the output double
+	 */
 	public static Double Double(String string) {
 		if(string.equals("∞"))  { return  inf; } // ∞: return  ∞
 		if(string.equals("-∞")) { return -inf; } //-∞: return -∞
-		return new Double(string);               //otherwise, return the number
+		return new Double(string);               //otherwise, return the number (maybe replace with Double.valueOf()??)
 	}
 	
+	/**
+	 * removes (or "unsplices") the substring between chop1 (inclusive) and chop2 (exclusive)
+	 * @param s the input string
+	 * @param chop1 the starting index of the removed substring
+	 * @param chop2 the ending index of the removed substring (+1, like with iterators)
+	 * @return the output string
+	 */
 	public static String unsplice(String s, int chop1, int chop2) { //this takes a string and returns the same string with everything between chop1 and chop2 removed
 		return s.substring(0, chop1) + s.substring(chop2, s.length());
 	}
 	
+	/**
+	 * Converts a double to a string like a human would do it (WILL BE UPDATED.  So that the user can customize things, like the number of digits or when we go to scientific notation)
+	 * @param dub input double
+	 * @return output string
+	 */
 	public static String str(double dub) {  //this converts a double to a string, formatted so it doesn't have too many digits or any leading zeros
 		
 		//first we check for some special cases:
@@ -54,6 +93,15 @@ public class Mafs {
 		return res; //return the resulting string
 	}
 	
+	////////////////// MATH FUNCTIONS ////////////////////
+	
+	/**
+	 * A double raised to the power of an integer, calculated using exponentiation by squaring.
+	 * 
+	 * @param d - the base
+	 * @param a - the exponent
+	 * @return the base raised to the exponent
+	 */
 	public static double dPow(double d, int a) { //compute double d ^ integer a (exponentiation by squaring)
 		if(a<0)  { return dPow(1/d,-a); } //a is negative: return (1/d)^(-a)
 		                                  //general case:
@@ -75,14 +123,43 @@ public class Mafs {
 		return ans; //return the result
 	}
 	
+	/**
+	 * The sign/signum function.
+	 * 
+	 * @param d - the input
+	 * @return - 1 if d is positive, -1 if d is negative, 0 if d is 0.
+	 */
 	public static int sgn(double d) { if(d==0) { return 0; } return d>0 ? 1 : -1; } //return 0 if input is 0, else return sign
 	
+	/**
+	 * The complex sign function.
+	 * 
+	 * @param d - the input
+	 * @return - -1 if d is negative, 1 if non-negative
+	 */
+	public static int csgn(double d) { return d>=0 ? 1 : -1; } //return -1 if negative, 1 if non-negative.
+	
+	/**
+	 * A variation of the modulo who's range is always from 0 to d2.
+	 * When d2 is positive, the output will always be positive (or rather, non-negative), and since d2 is almost never negative,
+	 * this function is called "modPos", standing for modulo positive.
+	 * @param d1 - the dividend
+	 * @param d2 - the divisor
+	 * @return - the remainder
+	 */
 	public static double modPos(double d1, double d2) { //returns the mod, but never negative (except when d2 is negative)
-		double ret = d1%d2;                    //perform built-in mod
+		double ret = d1%d2;                                 //perform built-in mod
 		return (ret!=0 && (ret>=0 ^ d2>=0)) ? ret+d2 : ret; //if it's negative, make it positive
 	}
 	
-	
+	/**
+	 * The hyperbolic sine & cosine both computed simultaneously.  The name is inspired by the <code>FSINCOS</code> instruction used in
+	 * assembly code, which is slower than <code>cos</code> and slower than <code>sin</code>, but faster than doing them both.
+	 * This function calculates the exponential and its reciprocal, then uses arithmetic to find the <code>sinh</code> and <code>cosh</code>.
+	 * 
+	 * @param d - the hyperbolic argument
+	 * @return - the array {sinh(d), cosh(d)}
+	 */
 	public static double[] fsinhcosh(double d) { //returns the cosh & sinh, computed simultaneously
 		if(Math.abs(d)<1E-4D) { double sq = d*d; return new double[] {d+d*sq/6, 1+0.5*sq+sq*sq/24}; } //small input: return Taylor's series
 		if(Math.abs(d)>20)    { double exp = Math.exp(d-log2); return new double[] {d>0 ? exp : -exp, exp}; } //large input: return +-e^(x-ln(2))
