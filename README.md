@@ -8,7 +8,7 @@ If you see something that doesn't quite make sense, you might be able to find mo
 This library has been successfully been tested on Windows 10 and Linux Mint (an Ubuntu based distro).  I see no reason why it shouldn't run on Mac OS or on earlier (or later) versions of Windows, but cannot guarantee it will.
 
 # How to Download
-Some of you probably already know this....I didn't.  So, I'm putting this down for those of you who also struggle with Github.  Also, just cuz the README file is supposed to tell you how to use the code...and if you can't download it, you can't use it...
+Some of you probably already know this....I didn't.  So, I'm putting this down for those of you who also struggle with Github.  Also, just cuz the README file is supposed to tell you how to use the code...and if you can't download it, you can't use it.
 
 1. Make sure you have Processing downloaded on your system.
 2. Press the green dropdown "Code" button at the top of the Github page.  Press "Download ZIP".
@@ -22,6 +22,8 @@ Some of you probably already know this....I didn't.  So, I'm putting this down f
 10. Make sure it works properly.  Try some of the example code below.
 
 11. Once you've made sure your library is fully functional, feel free to delete the ZIP file from your downloads folder.  As well as any other copies of this library that haven't been moved to the Processing sketchbook.  This step is optional, of course.
+
+Just to note, this library is currently going through a transition, and will soon be "Github released", whatever that means.  After that, the download process might be a little different.  Or it might be exactly the same.  I honestly have no idea.
 
 # Details
 
