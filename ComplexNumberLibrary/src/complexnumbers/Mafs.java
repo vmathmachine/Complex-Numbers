@@ -161,8 +161,8 @@ public class Mafs {
 	 * @return - the array {sinh(d), cosh(d)}
 	 */
 	public static double[] fsinhcosh(double d) { //returns the cosh & sinh, computed simultaneously
-		if(Math.abs(d)<1E-4D) { double sq = d*d; return new double[] {d+d*sq/6, 1+0.5*sq+sq*sq/24}; } //small input: return Taylor's series
-		if(Math.abs(d)>20)    { double exp = Math.exp(d-log2); return new double[] {d>0 ? exp : -exp, exp}; } //large input: return +-e^(x-ln(2))
+		if(Math.abs(d)<1E-4D) { double sq = d*d; return new double[] {d+d*sq/6, 1+0.5*sq+sq*sq/24}; }                   //small input: return Taylor's series
+		if(Math.abs(d)>20)    { double exp = Math.exp(Math.abs(d)-log2); return new double[] {d>0 ? exp : -exp, exp}; } //large input: return +-e^(|x|-ln(2))
 		
 		double part = Math.exp(d); //regular input: compute e^d
 		double inv  = 1.0D/part;   //and e^-d
