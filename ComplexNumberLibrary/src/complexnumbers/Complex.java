@@ -96,7 +96,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 	 * @param r - the new absolute value
 	 * @param ang - the new argument
 	 */
-	public void setPolar(double r, double ang) { re=r*Math.cos(ang); im=r*Math.sin(ang); validate(); }
+	public void setPolar(double r, double ang) { re=r*cos(ang); im=r*sin(ang); validate(); }
 	
 	/**
 	 * Setter - sets the real part to x
@@ -117,7 +117,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 	 * Setter - sets the argument to a (without changing the absolute value)
 	 * @param a the argument
 	 */
-	public void setArg(double a) { double abs = abs(); set(abs*Math.cos(a), abs*Math.sin(a)); }
+	public void setArg(double a) { double abs = abs(); set(abs*cos(a), abs*sin(a)); }
 	
 	/**
 	 * Tests for equality between two <code>Complex</code> objects. Returns true if their components are equal or if they're both NaN.
@@ -151,7 +151,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 	 * @param ang - the angle
 	 * @return - whether or not they equal
 	 */
-	public boolean equalsPolar(double r, double ang) { return re==r*Math.cos(ang) && im==r*Math.sin(ang); }
+	public boolean equalsPolar(double r, double ang) { return re==r*cos(ang) && im==r*sin(ang); }
 	
 	/** Returns true if the object is a complex with the same value */
 	@Override
@@ -322,7 +322,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 	 * @return - the rotated copy
 	 */
 	public Complex rotate(double ang) { //returns a rotated copy
-		double cos = Math.cos(ang), sin = Math.sin(ang); return new Complex(re*cos-im*sin,re*sin+im*cos);
+		double cos = cos(ang), sin = sin(ang); return new Complex(re*cos-im*sin,re*sin+im*cos);
 	}
 	/**
 	 * "Rotate Equals", rotates the number by a specified amount counterclockwise in the complex plane.  Returns the result.
@@ -330,7 +330,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 	 * @return - the rotated result
 	 */
 	public Complex rotateEq(double ang) { //rotates & returns
-		double cos = Math.cos(ang), sin = Math.sin(ang); set(re*cos-im*sin,re*sin+im*cos); return this;
+		double cos = cos(ang), sin = sin(ang); set(re*cos-im*sin,re*sin+im*cos); return this;
 	}
 	
 ///////////////////////////////////////////// BASIC ARITHMETIC /////////////////////////////////////////////////
@@ -731,10 +731,10 @@ public class Complex extends Mafs { //this object represents a complex number.
 	 */
 	public Complex exp() { //e^z
 		if(im==0) { return new Complex(Math.exp(re));                  }   //real number : return e^(real part)
-		if(re==0) { return new Complex(Math.cos(im),Math.sin(im));     }   //imag number : return cos(imag)+sin(imag)*i
+		if(re==0) { return new Complex(cos(im),sin(im));               }   //imag number : return cos(imag)+sin(imag)*i
 		if(re>709.78 && re<710.13) { return sub(log2).exp().muleq(2D); }   //large real number: subtract ln(2), take exponent, multiply by 2
 		
-		return new Complex(Math.cos(im),Math.sin(im)).muleq(Math.exp(re)); //general case: return e^(real)*(cos(imag)+sin(imag)*i)
+		return new Complex(cos(im),sin(im)).muleq(Math.exp(re)); //general case: return e^(real)*(cos(imag)+sin(imag)*i)
 	}
 	
 	/**
@@ -748,8 +748,8 @@ public class Complex extends Mafs { //this object represents a complex number.
 		if(re==0||im==0) { return new Complex(Math.log(abs()), arg()); } //real/imaginary number: return ln|z|+arg(z)i
 		if(isInf())      { return new Complex(inf, arg());             } //infinite number: return ∞+arg(z)i
 		
-		double L=lazyabs();                      //take lazy abs for a quick sense of scale
-		if(L<=1.055E-154D || L>=9.481E+153D) {   //absolute square overflows/underflows:
+		double L=lazyabs();                        //take lazy abs for a quick sense of scale
+		if(L<=1.055E-154D || L>=9.481E+153D) {     //absolute square overflows/underflows:
 			return div(L).ln().addeq(Math.log(L)); //divide by L, take the log, and add back ln(L)
 		}
 		return new Complex(0.5D*Math.log(absq()), arg()); //general case: return ln(|z|²)/2+arg(z)i
@@ -801,9 +801,9 @@ public class Complex extends Mafs { //this object represents a complex number.
 		else if(L>=7.86682407E-309D && L<=1.27116100E+308D) { mag=Math.pow(abs() ,    a); } //if within another range, take |z|^a
 		else                                   { return div(L).pow(a).mul(Math.pow(L,a)); } //if outside both ranges, divide by L, raise to a-th power, mult by L^a
 		
-		double arg = arg();                                        //compute the argument
-		Complex unit=new Complex(Math.cos(a*arg),Math.sin(a*arg)); //create a phaser with angle a*θ
-		return unit.muleq(mag);                                    //return the magnitude times the phaser
+		double arg = arg();                              //compute the argument
+		Complex unit=new Complex(cos(a*arg),sin(a*arg)); //create a phaser with angle a*θ
+		return unit.muleq(mag);                          //return the magnitude times the phaser
 	}
 	
 	/**
@@ -855,28 +855,28 @@ public class Complex extends Mafs { //this object represents a complex number.
 	/** hyperbolic cosine @return the hyperbolic cosine*/
 	public Complex cosh() {                                                 //cosh
 		if(im==0) { return new Complex(Math.cosh(re)); } //real input: return cosh
-		if(re==0) { return new Complex(Math.cos (im)); } //imag input: return cos
+		if(re==0) { return new Complex(cos (im));      } //imag input: return cos
 		
 		double[] sinhcosh=fsinhcosh(re);                 //compute sinh & cosh of real part
-		return new Complex(sinhcosh[1]*Math.cos(im),sinhcosh[0]*Math.sin(im)); //cosh(x+yi) = cosh(x)cos(y)+sinh(x)sin(y)i
+		return new Complex(sinhcosh[1]*cos(im),sinhcosh[0]*sin(im)); //cosh(x+yi) = cosh(x)cos(y)+sinh(x)sin(y)i
 	}
 	/** hyperbolic sine @return the hyperbolic sine*/
 	public Complex sinh() {                                                  //sinh
 		if(im==0) { return new Complex( Math.sinh(re)); } //real input: return sinh
-		if(re==0) { return new Complex(0,Math.sin(im)); } //imag input: return sin*i
+		if(re==0) { return new Complex(0,sin(im));      } //imag input: return sin*i
 		
 		double[] sinhcosh=fsinhcosh(re);                  //compute sinh & cosh of real part
-		return new Complex(sinhcosh[0]*Math.cos(im),sinhcosh[1]*Math.sin(im)); //sinh(x+yi) = sinh(x)cos(y)+cosh(x)sin(y)i
+		return new Complex(sinhcosh[0]*cos(im),sinhcosh[1]*sin(im)); //sinh(x+yi) = sinh(x)cos(y)+cosh(x)sin(y)i
 	}
 	/** hyperbolic tangent @return the hyperbolic tangent*/
 	public Complex tanh() {                                                     //tanh
-		if(im==0) 	 { return new Complex( Math.tanh(re)); } //real input: return tanh
-		if(re==0)    { return new Complex(0,Math.tan(im)); } //imag input: return tan*i
+		if(im==0)     { return new Complex(Math.tanh(re)); } //real input: return tanh
+		if(re==0)     { return new Complex(0,tan(im));     } //imag input: return tan*i
 		if(Math.abs(re)>20) { return new Complex(sgn(re)); } //large input: return +-1
 		
 		double[] sinhcosh=fsinhcosh(2*re);                   //compute sinh & cosh of twice the real part
-		double denom = 1.0D/(sinhcosh[1]+Math.cos(2*im));    //compute 1/(cosh(2x)+cos(2y))
-		return new Complex(sinhcosh[0]*denom, Math.sin(2*im)*denom); //tanh(x+yi) = (sinh(2x)+sin(2y)i)/(cosh(2x)+cos(2y))
+		double denom = 1.0D/(sinhcosh[1]+cos(2*im));         //compute 1/(cosh(2x)+cos(2y))
+		return new Complex(sinhcosh[0]*denom, sin(2*im)*denom); //tanh(x+yi) = (sinh(2x)+sin(2y)i)/(cosh(2x)+cos(2y))
 	}
 	
 	/** cosine @return the cosine*/
@@ -911,7 +911,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 		if(absq()>1E18D) { return abs2().ln().addeq(log2).muleqcsgn(this); } //huge input: return asymptotic approximation
 		if(lazyabs()<=1E-4D) { return mul(Cpx.sub(1,sq().div(6))); }         //tiny input: return taylor's series
 		
-		return (abs2().addeq( sq().add(1).sqrt() )).ln().muleqcsgn(this); //else: return csgn(z)ln(|z|+√(z²+1))
+		return (abs2().addeq( sq().add(1).sqrt() )).ln().muleqcsgn(this);    //else: return csgn(z)ln(|z|+√(z²+1))
 	}
 	/** inverse tanh @return the inverse hyperbolic tangent*/
 	public Complex atanh() {                                                               //artanh
