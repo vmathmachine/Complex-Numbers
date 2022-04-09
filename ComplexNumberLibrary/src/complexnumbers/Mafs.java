@@ -23,6 +23,8 @@ public class Mafs {
 	public static double ROOTPI2=0.886226925452758D;
 	/** ln(2) */
 	public static double log2=0.6931471805599453D;
+	/** ln(π) */
+	public static double logPI=1.1447298858494001D;
 	/** The Euler-Mascheroni constant.
 	 *  It's just called Mascheroni because, despite the push by mathematicians, it will never just be called "Euler's constant".
 	 */
@@ -96,6 +98,18 @@ public class Mafs {
 	////////////////// MATH FUNCTIONS ////////////////////
 	
 	/**
+	 * The factorial of an integer, represented with 64 bits (returns 2^63-1 if it overflows)
+	 * @param n input
+	 * @return n!
+	 */
+	public static long factorial(int n) { //computes the factorial
+		if(n<0 || n>=21) { return Long.MAX_VALUE; } //outside the range [0,20], n! overflows
+		long prod = 1L;                    //initialize product
+		for(int k=2;k<=n;k++) { prod*=k; } //multiply all numbers from [2,n]
+		return prod;                       //return result
+	}
+	
+	/**
 	 * A double raised to the power of an integer, calculated using exponentiation by squaring.
 	 * 
 	 * @param d - the base
@@ -150,6 +164,39 @@ public class Mafs {
 	public static double modPos(double d1, double d2) { //returns the mod, but never negative (except when d2 is negative)
 		double ret = d1%d2;                                 //perform built-in mod
 		return (ret!=0 && (ret>=0 ^ d2>=0)) ? ret+d2 : ret; //if it's negative, make it positive
+	}
+	
+	/**
+	 * A slight variation of the sine such that, if the angle is a multiple of π, the output is always 0.
+	 * @param d the input
+	 * @return the sine
+	 */
+	public static double sin(double d) { //computes the sine without roundoff errors
+		if(d%Math.PI==0) { return 0; }   //if a multiple of π, return 0
+		return Math.sin(d);              //return sine
+	}
+	
+	/**
+	 * A slight variation of the cosine such that, if the angle is an odd multiple of π/2, the output is always 0
+	 * @param d the input
+	 * @return the cosine
+	 */
+	public static double cos(double d) { //computes the cosine without roundoff errors
+		if(Math.abs(d%Math.PI)==HALFPI) { return 0; } //if an odd multiple of π/2, return 0
+		return Math.cos(d);                           //return cosine
+	}
+	
+	/**
+	 * A slight variation of the tangent such that, if the angle is a multiple of π, the output is always 0, and if the angle is an odd
+	 * multiple of π/2, the output is always ∞.
+	 * @param d the input
+	 * @return the tangent
+	 */
+	public static double tan(double d) { //computes the tangent without roundoff errors
+		double mod = d%Math.PI;
+		if(mod==0)                { return 0;   } //if a multiple of π, return 0
+		if(Math.abs(mod)==HALFPI) { return inf; } //if an odd multiple of π/2, return ∞
+		return Math.tan(d);                       //return tangent
 	}
 	
 	/**
