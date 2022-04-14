@@ -27,10 +27,13 @@ public class Complex extends Mafs { //this object represents a complex number.
 	/** The imaginary part. Since there are no illegal numbers, this attribute is public. */
 	public double im;
 	
+	/** (static variable) If true, cbrt(-1)=-1.  If false, cbrt(-1)=(1+√(3)i)/2. */
+	public static boolean cbrt_Option=true;
+	
 /////////////////////////////////////////////// CONSTRUCTORS ////////////////////////////////////
 	
 	/** Default constructor: returns 0+0i*/
-	public Complex()                   { re=im=0;    }
+	public Complex() { re=im=0; }
 	/**
 	 * Constructor with real and imaginary parts as parameters, constructs x+yi
 	 * @param x - real part
@@ -41,7 +44,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 	 * Constructor with one parameter, constructs x+0i.
 	 * @param x - real part
 	 */
-	public Complex(double x)           { re=x; im=0; }
+	public Complex(double x) { re=x; im=0; }
 	
 	/**
 	 * Pseudo-constructor with real and imaginary parts as parameters, constructs x+yi, before performing a check to avoid
@@ -57,9 +60,9 @@ public class Complex extends Mafs { //this object represents a complex number.
 	
 	/** Returns a deep copy @return a deep copy */
 	@Override
-	public Complex clone()              { return new Complex(re,im); } //create clone
+	public Complex clone() { return new Complex(re,im); } //create clone
 	/** Returns a deep copy @return a deep copy */
-	public Complex copy ()              { return new Complex(re,im); } //create deep copy
+	public Complex copy () { return new Complex(re,im); } //create deep copy
 	
 	/**
 	 * Setter - sets the real and imaginary parts
@@ -713,13 +716,16 @@ public class Complex extends Mafs { //this object represents a complex number.
 	}
 	
 	/** 
-	 * The cube root.  More specifically, the principal cube root.  For real parts, we just return the real cube root.  For complex
-	 * numbers, we return whichever of the 3 cube roots has the largest real part.
+	 * The cube root.  More specifically, the principal cube root.  We simply return whichever of the 3 cube roots has the largest real part.
+	 * If cbrt_Option is true, we'll make an exception for negative reals, instead returning the negative real cube root.  Otherwise, we return
+	 * that negative cube root times (-1-√(3)i)/2.
 	 * @return the cube root
 	 */
 	public Complex cbrt() { //cube root of complex z
-		if(im==0)                { return new Complex(Math.cbrt(re));              } //z is real    : return cbrt(re(z))
-		if(isInf())              { return new Complex(inf,Math.abs(im)==inf?im:0); } //special case: infinite, return ∞
+		if(im==0 && (cbrt_Option||re>=0)) { return new Complex(Math.cbrt(re)); } //z is real: return cbrt(re(z)) (we may or may not exclude negatives)
+		
+		if(re==-inf)             { return new Complex(inf,im>=0?inf:-inf);         } //special case : -∞+something*i
+		if(isInf())              { return new Complex(inf,Math.abs(im)==inf?im:0); } //special case : something else infinite
 		if(lazyabs()>1.271E308D) { return mul(0.125D).cbrt().muleq(2D);            } //|z| overflows: return 2cbrt(z/8)
 		
 		return new Complex(0,arg()/3).exp().muleq(Math.cbrt(abs()));                 //general case : return e^(arg(z)/3)*cbrt(|z|)
@@ -732,13 +738,14 @@ public class Complex extends Mafs { //this object represents a complex number.
 	public Complex exp() { //e^z
 		if(im==0) { return new Complex(Math.exp(re));                  }   //real number : return e^(real part)
 		if(re==0) { return new Complex(cos(im),sin(im));               }   //imag number : return cos(imag)+sin(imag)*i
-		if(re>709.78 && re<710.13) { return sub(log2).exp().muleq(2D); }   //large real number: subtract ln(2), take exponent, multiply by 2
+		if(re>709.78 && re<710.13) { return sub(log2).exp().muleq(2D); }   //large real part: subtract ln(2), take exponent, multiply by 2
 		
-		return new Complex(cos(im),sin(im)).muleq(Math.exp(re)); //general case: return e^(real)*(cos(imag)+sin(imag)*i)
+		double exp = Math.exp(re);                   //compute exp of real part
+		return new Complex(exp*cos(im),exp*sin(im)); //return e^(real)*(cos(imag)+sin(imag)*i)
 	}
 	
 	/**
-	 * Standing for "logarithmus naturalis", or natural logarithm in english, this returns the base e logarithm of this number.  Its real part
+	 * Standing for "logarithmus naturalis", or natural logarithm in English, this returns the base e logarithm of this number.  Its real part
 	 * is the logarithm of the absolute value, its imaginary part is the argument.  Technically, this returns the principal value of the
 	 * logarithm, since all non-zero numbers have infinitely many natural logarithms, but the principal value is whichever one has the
 	 * imaginary part closest to 0.
@@ -786,7 +793,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 	
 	/**
 	 * This number raised to the power of the real double a.  Computed by raising the absolute value to the power of a, multiplying the
-	 * angle by a, and returning the result.  If this is a real number, we use dPow to reduce mulitiplications.  If a is an integer, we
+	 * angle by a, and returning the result.  If this is a real number, we use dPow to reduce multiplications.  If a is an integer, we
 	 * use the previous pow function to improve performance and accuracy.
 	 * @param a - the exponent
 	 * @return - the result
@@ -801,9 +808,8 @@ public class Complex extends Mafs { //this object represents a complex number.
 		else if(L>=7.86682407E-309D && L<=1.27116100E+308D) { mag=Math.pow(abs() ,    a); } //if within another range, take |z|^a
 		else                                   { return div(L).pow(a).mul(Math.pow(L,a)); } //if outside both ranges, divide by L, raise to a-th power, mult by L^a
 		
-		double arg = arg();                              //compute the argument
-		Complex unit=new Complex(cos(a*arg),sin(a*arg)); //create a phaser with angle a*θ
-		return unit.muleq(mag);                          //return the magnitude times the phaser
+		double arg = arg();                                //compute the argument
+		return new Complex(mag*cos(a*arg),mag*sin(a*arg)); //return complex number with magnitude |z|^a & angle a*θ
 	}
 	
 	/**
@@ -852,39 +858,39 @@ public class Complex extends Mafs { //this object represents a complex number.
 	
 //////////////////// TRIGONOMETRY //////////////////////////////////////
 	
-	/** hyperbolic cosine @return the hyperbolic cosine*/
-	public Complex cosh() {                                                 //cosh
-		if(im==0) { return new Complex(Math.cosh(re)); } //real input: return cosh
-		if(re==0) { return new Complex(cos (im));      } //imag input: return cos
+	/** complex cosine @return the cosine*/
+	public Complex cos() {                                                  //cos
+		if(im==0) { return new Complex(cos(re));       } //real input: return cos
+		if(re==0) { return new Complex(Math.cosh(im)); } //imag input: return cosh
 		
-		double[] sinhcosh=fsinhcosh(re);                 //compute sinh & cosh of real part
-		return new Complex(sinhcosh[1]*cos(im),sinhcosh[0]*sin(im)); //cosh(x+yi) = cosh(x)cos(y)+sinh(x)sin(y)i
+		double[] sinhcosh=fsinhcosh(im);                 //compute sinh & cosh of imag part
+		return new Complex(cos(re)*sinhcosh[1],-sin(re)*sinhcosh[0]); //cos(x+yi) = cos(x)cosh(y)-sin(x)sinh(y)i
 	}
-	/** hyperbolic sine @return the hyperbolic sine*/
-	public Complex sinh() {                                                  //sinh
-		if(im==0) { return new Complex( Math.sinh(re)); } //real input: return sinh
-		if(re==0) { return new Complex(0,sin(im));      } //imag input: return sin*i
+	/** complex sine @return the sine*/
+	public Complex sin() {                                                    //sin
+		if(im==0) { return new Complex(sin(re));         } //real input: return sin
+		if(re==0) { return new Complex(0,Math.sinh(im)); } //imag input: return sinh*i
 		
-		double[] sinhcosh=fsinhcosh(re);                  //compute sinh & cosh of real part
-		return new Complex(sinhcosh[0]*cos(im),sinhcosh[1]*sin(im)); //sinh(x+yi) = sinh(x)cos(y)+cosh(x)sin(y)i
+		double[] sinhcosh=fsinhcosh(im);                   //compute sinh & cosh of imag part
+		return new Complex(sin(re)*sinhcosh[1],cos(re)*sinhcosh[0]); //sin(x+yi) = sin(x)cosh(y)+cos(x)sinh(y)i
 	}
-	/** hyperbolic tangent @return the hyperbolic tangent*/
-	public Complex tanh() {                                                     //tanh
-		if(im==0)     { return new Complex(Math.tanh(re)); } //real input: return tanh
-		if(re==0)     { return new Complex(0,tan(im));     } //imag input: return tan*i
-		if(Math.abs(re)>20) { return new Complex(sgn(re)); } //large input: return +-1
+	/** complex tangent @return the tangent*/
+	public Complex tan() {                                                        //tan
+		if(im==0) 	 { return new Complex(tan(re));          } //real input: return tan
+		if(re==0)    { return new Complex(0,Math.tanh(im));  } //imag input: return tan*i
+		if(Math.abs(im)>20) { return new Complex(0,sgn(im)); } //large input: return +-1
 		
-		double[] sinhcosh=fsinhcosh(2*re);                   //compute sinh & cosh of twice the real part
-		double denom = 1.0D/(sinhcosh[1]+cos(2*im));         //compute 1/(cosh(2x)+cos(2y))
-		return new Complex(sinhcosh[0]*denom, sin(2*im)*denom); //tanh(x+yi) = (sinh(2x)+sin(2y)i)/(cosh(2x)+cos(2y))
+		double[] sinhcosh=fsinhcosh(2*im);                     //compute sinh & cosh of twice the imag part
+		double denom = 1.0D/(cos(2*re)+sinhcosh[1]);           //compute 1/(cos(2x)+cosh(2y))
+		return new Complex(sin(2*re)*denom, sinhcosh[0]*denom); //tan(x+yi) = (sin(2x)+sinh(2y)i)/(cos(2x)+cosh(2y))
 	}
 	
-	/** cosine @return the cosine*/
-	public Complex cos() { return mulI().cosh();          } //cos
-	/** sine @return the sine*/
-	public Complex sin() { return mulI().sinh().diveqI(); } //sin
-	/** tangent @return the tangent*/
-	public Complex tan() { return mulI().tanh().diveqI(); } //tan
+	/** hyperbolic cosine @return the hyperbolic cosine*/
+	public Complex cosh() { return mulI().cos();          } //cosh
+	/** hyperbolic sine @return the hyperbolic sine*/
+	public Complex sinh() { return mulI().sin().diveqI(); } //sinh
+	/** hyperbolic tangent @return the hyperbolic tangent*/
+	public Complex tanh() { return mulI().tan().diveqI(); } //tanh
 	
 	/** secant    @return    secant*/ public Complex sec () { return cos ().inv(); } //sec
 	/** cosecant  @return  cosecant*/ public Complex csc () { return sin ().inv(); } //csc
@@ -900,7 +906,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 	public Complex acosh() {                                                //arcosh
 		if(im==0&&Math.abs(re)<=1) { return new Complex(0,Math.acos(re)); } //real input [-1,1]: return acos*i
 		
-		if(absq()>1E18D) { return ln().addeq(log2); }           //huge input: return asymptotic approximation
+		if(absq()>1E18D) { return ln().addeq(log2); }            //huge input: return asymptotic approximation
 		
 		return add( sq().subeq(1).sqrt().muleqcsgn(this) ).ln(); //else: return ln(z+csgn(z)√(z²-1))
 	}
@@ -911,7 +917,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 		if(absq()>1E18D) { return abs2().ln().addeq(log2).muleqcsgn(this); } //huge input: return asymptotic approximation
 		if(lazyabs()<=1E-4D) { return mul(Cpx.sub(1,sq().div(6))); }         //tiny input: return taylor's series
 		
-		return (abs2().addeq( sq().add(1).sqrt() )).ln().muleqcsgn(this);    //else: return csgn(z)ln(|z|+√(z²+1))
+		return (abs2().addeq( sq().addeq(1).sqrt() )).ln().muleqcsgn(this);  //else: return csgn(z)ln(|z|+√(z²+1))
 	}
 	/** inverse tanh @return the inverse hyperbolic tangent*/
 	public Complex atanh() {                                                               //artanh
