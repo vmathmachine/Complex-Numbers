@@ -68,10 +68,8 @@ public class Cpx2 extends Cpx {
 		}
 		
 		//////// INTEGER INPUTS ////////
-		if(z.im==0 && z.re%1==0 && z.re<22) {      //if the input is an integer (and it's small enough):
-			long prod=1L;
-			for(long n=2L;n<z.re;n++) { prod*=n; } //multiply together all numbers before the input
-			return new Complex((double)prod);      //return result
+		if(z.isInt() && z.re<22) {                            //if the input is an integer (and it's small enough):
+			return new Complex((double)factorial((int)z.re)); //cast to an integer & compute the traditional factorial
 		}
 		
 		//////// GENERAL CASE /////////
@@ -127,10 +125,8 @@ public class Cpx2 extends Cpx {
 		}
 		
 		////////////// INTEGER INPUTS //////////////////////
-	    if(z.isInt() && z.re<22) { //if the input is an integer, we can just solve via repeated multiplication
-	    	long prod=1L;
-	      	for(long n=2L;n<z.re;n++) { prod*=n; }  //multiply all numbers before the input
-	      	return Complex(Math.log((double)prod)); //return the log of the result
+	    if(z.isInt() && z.re<22) {                                      //if the input is an integer (and it's small enough)
+	    	return new Complex(Math.log((double)factorial((int)z.re))); //cast to an integer, compute the traditional factorial, return the log
 	    }
 	    
 	    //////////////// GENERAL CASE ///////////////////
