@@ -58,8 +58,8 @@ public class Cpx extends Mafs {
 		int separator = -1; //if there's only 1, this'll be used to record the position of that one
 		for(int n=1;n<s.length();n++) { //we start from 1, since we won't count ones @ the start
 			if((s.charAt(n)=='+' || s.charAt(n)=='-') && (s.charAt(n-1)!='e' && s.charAt(n-1)!='E')) { //if this is + or -, and the previous char wasn't e or E:
-				numPlusMinus++;                                                                          //increment the counter
-				separator = n;                                                                           //record the position of this plus or minus
+				numPlusMinus++;                                                                        //increment the counter
+				separator = n;                                                                         //record the position of this plus or minus
 			}
 		}
   
@@ -67,10 +67,10 @@ public class Cpx extends Mafs {
   
 		switch(numPlusMinus) {
 			case 0: //if there's no +/- separating the components, we're dealing with either a real or imaginary number
-				if(s.endsWith("i")) { //if it ends with i, then it's imaginary
+				if(s.endsWith("i")) {                         //if it ends with i, then it's imaginary
 					compArray[1]=s.substring(0,s.length()-1); //set the second component to this, but without an i at the end
 				}
-				else { //otherwise, it's real
+				else {              //otherwise, it's real
 					compArray[0]=s; //set the first component to this
 				}
 				break;
@@ -90,7 +90,7 @@ public class Cpx extends Mafs {
 		}
 		catch(NumberFormatException e) { return new Complex(Double.NaN); } //if it's invalid, return NaN
 		
-		if(compArray[1].equals("+") || compArray[1].equals("")) { result.im = 1;  } //if the imaginary part is either shown as i or +i, convert that to the number 1
+		if(compArray[1].equals("+") || compArray[1].equals("")) { result.im =  1; } //if the imaginary part is either shown as i or +i, convert that to the number 1
 		else if(compArray[1].equals("-"))                       { result.im = -1; } //if the imaginary part is shown as -i, convert that to the number -1
 		else {
 			try {
@@ -108,7 +108,7 @@ public class Cpx extends Mafs {
 	 * @param ang the argument
 	 * @return the complex number
 	 */
-	public static Complex polar(double r, double ang) { return new Complex(r*Math.cos(ang),r*Math.sin(ang)); } //constructs a number w/ polar notation
+	public static Complex polar(double r, double ang) { return new Complex(r*cos(ang),r*sin(ang)); } //constructs a number w/ polar notation
 	
 	//we will now overload (most of) the functions from complex so that the complex numbers can be called as parameters
 	
@@ -225,28 +225,28 @@ public class Cpx extends Mafs {
 	 * @param b complex addend
 	 * @return sum
 	 */
-	public static Complex add(double a, Complex b) { return b.add(a);         } //these functions perform the four basic arithmetic
+	public static Complex add(double a, Complex b) { return b.add(a); }
 	/**
 	 * Subtracts a complex from a double
 	 * @param a real minuend
 	 * @param b complex subtrahend
 	 * @return difference
 	 */
-	public static Complex sub(double a, Complex b) { return b.neg().addeq(a); } //operations on one real and one complex number
+	public static Complex sub(double a, Complex b) { return b.neg().addeq(a); }
 	/**
 	 * Multiplies a double by a complex
 	 * @param a real multiplicand
 	 * @param b complex multiplier
 	 * @return product
 	 */
-	public static Complex mul(double a, Complex b) { return b.mul(a);         }
+	public static Complex mul(double a, Complex b) { return b.mul(a); }
 	/**
 	 * Divides a double by a complex
 	 * @param a real dividend
 	 * @param b complex divisor
 	 * @return quotient
 	 */
-	public static Complex div(double a, Complex b) { return inv(b).muleq(a);  }
+	public static Complex div(double a, Complex b) { return inv(b).muleq(a); }
 	
 	/**
 	 * Returns the input negated
@@ -373,7 +373,7 @@ public class Cpx extends Mafs {
 	 * @param z complex input
 	 * @return the common logarithm
 	 */
-	public static Complex log10(Complex z) { return z.ln().muleq(0.434294481903251828D); } //base 10 log...for anyone who wanted that
+	public static Complex log10(Complex z) { return z.ln().muleq(0.434294481903251828D); } //base 10 log
 	
 	/**
 	 * Complex raised to the power of an integer
@@ -580,8 +580,8 @@ public class Cpx extends Mafs {
 		if(z2.subI(HALFPI).lazyabs()<1E-4) { return ln(z.mulI().addeq(HALFPI)).diveqI().addeqI(log2); } //approximation with logarithm
 		if(z2.addI(HALFPI).lazyabs()<1E-4) { return ln(z.divI().addeq(HALFPI)).muleqI().subeqI(log2); } //approximation with logarithm
 		
-		double[] sinhcosh = fsinhcosh(z.re);               //compute the cosh & sinh of the real part
-		double cos = Math.cos(z.im), sin = Math.sin(z.im); //compute the cos & sin of the imaginary part
+		double[] sinhcosh = fsinhcosh(z.re);     //compute the cosh & sinh of the real part
+		double cos = cos(z.im), sin = sin(z.im); //compute the cos & sin of the imaginary part
 		return new Complex(Math.atan2(sinhcosh[0],cos), 0.5*Math.log((sinhcosh[1]+sin)/(sinhcosh[1]-sin)));
 	    //gd(x+yi) = atan2(sinh(x),cos(y)) + iln((cosh(x)+sin(y))/(cosh(x)-sin(y)))/2
 	}
