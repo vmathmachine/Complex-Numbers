@@ -59,5 +59,5 @@ println(B, C);     //the addeq function DID alter C, but not B, so it should pri
 
 ```
 Complex A=Cpx.iTimes(Math.PI); //declares A as the number πi (note that this is slightly shorter than saying new Complex(0,Math.PI))
-println(A.exp().add(1));       //due to Euler's identity, e^(πi)+1=0.  Due to roundoff, this will not print out that, but will instead print out 1.224646799147E-16i
+println(A.exp().add(1));       //due to Euler's identity, e^(πi)+1=0.  So, if you're running the latest version, it should say 0.
 ```
