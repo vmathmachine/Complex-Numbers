@@ -167,7 +167,7 @@ public class Cpx2 extends Cpx {
 		Complex sin = sin(z.mul(Math.PI)); //compute the sine
 		
 		if(!sin.isInf()) { //if it doesn't overflow
-			Complex res = sub(logPI, sin.abs2().ln()); //find ln(π)-ln|sin(πz)| (abs2)
+			Complex res = sub(logPI, sin.abs2().log()); //find ln(π)-ln|sin(πz)| (abs2)
 			res.im += HALFPI*(z.divI().csgn())*(Math.floor(z.re)+Math.ceil(z.re)-1); //perform an adjustment to keep it continuous
 			if(z.re==(int)z.re) { res.im+=HALFPI; }                              //perform another adjustment for when the real part is an integer
 			return res;                                                          //return result
