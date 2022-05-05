@@ -26,22 +26,11 @@ public class Mafs {
 	/** ln(π) */
 	public static double logPI=1.1447298858494001D;
 	/** The Euler-Mascheroni constant.
-	 *  It's just called Mascheroni because, despite the push by mathematicians, it will never just be called "Euler's constant".
+	 *  It's just called Mascheroni because calling it Euler might cause people to confuse it for Euler's number.
 	 */
 	public static double Mascheroni=0.57721566490153286D;
 	
 	/////////////////// STRING BASED STUFF ///////////////////
-	
-	/**
-	 * Casts strings to a double, but also accepts ∞ and -∞.  Still has yet to be used.
-	 * @param string the input string
-	 * @return the output double
-	 */
-	public static Double Double(String string) {
-		if(string.equals("∞"))  { return  inf; } // ∞: return  ∞
-		if(string.equals("-∞")) { return -inf; } //-∞: return -∞
-		return new Double(string);               //otherwise, return the number (maybe replace with Double.valueOf()??)
-	}
 	
 	/**
 	 * removes (or "unsplices") the substring between chop1 (inclusive) and chop2 (exclusive)
@@ -55,16 +44,43 @@ public class Mafs {
 	}
 	
 	/**
-	 * Converts a double to a string like a human would do it (WILL BE UPDATED.  So that the user can customize things, like the number of digits or when we go to scientific notation)
+	 * Converts a double to a string like a human would do it
 	 * @param dub input double
 	 * @return output string
 	 */
-	public static String str(double dub) {  //this converts a double to a string, formatted so it doesn't have too many digits or any leading zeros
+	public static String str(double dub) { //converts a double to a string, formatted so it doesn't show -0 or have any unnecessary ".0"s.
+		
+		if(dub==0) { return "0"; } //to avoid returning -0, we treat 0 as a special case
+		
+		String res = dub+"";    //cast double to a string
+		int len = res.length(); //find the string length
+		
+		if(res.charAt(len-1)=='0' && res.charAt(len-2)=='.') { //if it ends with ".0":
+			res = res.substring(0,len-2);                        //remove the ".0"
+		}
+		else if(res.contains(".0E")) { //if it's in sci notation, and has ".0" right before the E:
+			int ind = res.indexOf('E');     //find the index of E
+			res = unsplice(res, ind-2,ind); //remove the ".0"
+		}
+		
+		return res; //return result
+	}
+	
+	/**
+	 * Converts a double to a string like a human would do it, but with a customizable number of decimal places
+	 * (-1 defaults to the previous function)
+	 * @param dub input double
+	 * @param dig number of digits
+	 * @return output string
+	 */
+	public static String str(double dub, int dig) { //this converts a double to a string, formatted so it doesn't have too many digits or any leading zeros
+		
+		if(dig<0) { return str(dub); } //negative number: cast to a string with the recommended number of places
 		
 		//first we check for some special cases:
-		if     (dub==0  ) { return "0";         } //if the number is 0, return "0" (this is specified to make sure "-0" isn't returned)
-		else if(dub!=dub) { return "undefined"; } //if the number is NaN, return "undefined"
-		  
+		if     (dub==0  ) { return "0";   } //if the number is 0, return "0" (this is specified to make sure "-0" isn't returned)
+		else if(dub!=dub) { return "NaN"; } //if the number is NaN, return "undefined"
+		
 		//we'll now convert the number into a string, and unsplice from it any trailing zeros
 		//(for the purposes of keeping comments short, a decimal point with nothing but zeros after it will also be considered a "trailing zero")
 		
@@ -72,18 +88,26 @@ public class Mafs {
 		int cut1;   //position of the 1st cut (right before the first trailing zero)
 		int cut2;   //position of the 2nd cut (right after the coefficient)
 		
-		if(Math.abs(dub)<1E10D && Math.abs(dub)>=1E-3D) { //if the number is normal sized, we will return a coefficient w/ no base or exponent
-			res=String.format("%1.12f",dub);             //format the number to 12 decimal places
-			cut2=res.length();                          //since the text is only a coefficient, cut2 happens at the end of the string
+		double minSci=1; //the point when we go from standard to scientific notation depends on the number of digits
+		switch(dig) {
+			case 0: case 1: minSci=1;     break; //0, 1: all fractions show in scientific
+			case 2: case 3: minSci=0.1D;  break; //2, 3: anything smaller than 1/10
+			case 4: case 5: minSci=0.01D; break; //4, 5: anything smaller than 1/100
+			default:        minSci=1E-3D; break; //everything else: anything smaller than 1E-3
 		}
 		
-		else {                             //number is very large / small: return in full scientific notation
-			res=String.format("%1.12E",dub); //format the number to 12 decimal places with scientific notation
-			cut2=res.indexOf("E");           //the coefficient ends right before the "E"
+		if(Math.abs(dub)<1E7D && Math.abs(dub)>=minSci) { //if the number is normal sized, we will return a coefficient w/ no base or exponent
+			res=String.format("%1."+dig+"f",dub);         //format the number to 12 decimal places
+			cut2=res.length();                            //since the text is only a coefficient, cut2 happens at the end of the string
+		}
+		
+		else {                                    //number is very large / small: return in full scientific notation
+			res=String.format("%1."+dig+"E",dub); //format the number to 12 decimal places with scientific notation
+			cut2=res.indexOf("E");                //the coefficient ends right before the "E"
 			
-		    //before we move on to remove any trailing zeros, let's first remove any unnecessary 0s in the exponent
+		    //before we move on to remove any trailing zeros, let's first remove any unnecessary 0s or +s in the exponent
 		    if(res.charAt(cut2+2)=='0') { res=unsplice(res,cut2+2,cut2+3); } //if there's a 0 after the "E+" or "E-", remove it
-		    //if(res.charAt(cut2+1)=='+') { res=unsplice(res,cut2+1,cut2+2); } //if there's a + after the "E", remove it
+		    if(res.charAt(cut2+1)=='+') { res=unsplice(res,cut2+1,cut2+2); } //if there's a + after the "E", remove it
 		}
 		
 		cut1=cut2;                                 //at first, we'll assume there are no trailing zeros
