@@ -30,6 +30,9 @@ public class Complex extends Mafs { //this object represents a complex number.
 	/** (static variable) If true, cbrt(-1)=-1.  If false, cbrt(-1)=(1+√(3)i)/2. */
 	public static boolean cbrt_Option=true;
 	
+	/** (static variable) If true, small components are omitted from string conversion due to roundoff. If false, they are preserved for accuracy.*/
+	public static boolean omit_Option=true;
+	
 /////////////////////////////////////////////// CONSTRUCTORS ////////////////////////////////////
 	
 	/** Default constructor: returns 0+0i*/
@@ -217,26 +220,38 @@ public class Complex extends Mafs { //this object represents a complex number.
 	
 	/**
 	 * If you were to write this complex number out as a string (in rectangular notation), this is what you'd get.
+	 * @return this as a string
 	 */
 	@Override
-	public String toString() {                                    //Complex -> String
+	public String toString() { //Complex -> String
+		return toString(-1);   //run the below function with the recommended number of digits
+	}
+	
+	/**
+	 * If you were to write this complex number out as a string in rectangular notation, with a specified number of digits, this is what you'd get. 
+	 * @param dig the number of digits
+	 * @return this as a string
+	 */
+	public String toString(int dig) {                             //Complex -> String (with a specific number of digits)
 		
-		if(isInf()) {                                           //special case: infinite input
+		if(isInf()) {                                             //special case: infinite input
 			if(Math.abs(im)==inf) { return "Complex Overflow";  } //  Complex Overflow
 			else if(re<0)         { return "Negative Overflow"; } // Negative Overflow
 			else                  { return "Overflow";          } //[regular] Overflow
 		}
 		
-		Complex sto=copy();                                                    //copy input
-		if(Math.abs(re)<1e-12 && Math.abs(im)>1e11*Math.abs(re)) { sto.re=0; } //small real, big imag: remove real from copy
-		if(Math.abs(im)<1e-12 && Math.abs(re)>1e11*Math.abs(im)) { sto.im=0; } //big real, small imag: remove imag from copy
+		Complex sto=copy();                                       //copy input
+		if(omit_Option) {                                         //if we've elected to omit small components:
+			if(Math.abs(re)<1e-12 && Math.abs(im)>1e11*Math.abs(re)) { sto.re=0; } //small real, big imag: remove real from copy
+			if(Math.abs(im)<1e-12 && Math.abs(re)>1e11*Math.abs(im)) { sto.im=0; } //big real, small imag: remove imag from copy
+		}
 		
 		String ret="";                                   //initialize return String to ""
 		
-		if(sto.re!=0||sto.im==0) { ret+=str(sto.re); }   //display real part if it's nonzero (or if the entire number is 0)
-		if(sto.re!=0&&sto.im> 0) { ret+="+";         }   //real "+" imag*i, include only if real!=0 & imag is positive
+		if(sto.re!=0||sto.im==0) { ret+=str(sto.re,dig); } //display real part if it's nonzero (or if the entire number is 0)
+		if(sto.re!=0&&sto.im> 0) { ret+='+';             } //real "+" imag*i, include only if real!=0 & imag is positive
 		
-		String imag=str(sto.im);
+		String imag=str(sto.im,dig);
 		if     (imag.equals( "1")) { ret+= "i";     } //imag part =  1 : print  i instead of  1i
 		else if(imag.equals("-1")) { ret+="-i";     } //imag part = -1 : print -i instead of -1i
 		else if(sto.im!=0)         { ret+=imag+"i"; } //else if imag!=0: print imag + "i"
@@ -246,10 +261,18 @@ public class Complex extends Mafs { //this object represents a complex number.
 	
 	/**
 	 * If you were to write this complex number out as a string (in polar notation), this is what you'd get.
-	 * @return casts to a string, but in polar notation
+	 * @return cast to a string, but in polar notation
 	 */
 	public String polarString() { //convert to a string, but written in polar notation
-		return str(abs())+" ∠ "+str(arg()); //absolute value, phaser, argument
+		return polarString(-1);   //run the below function with the recommended number of digits
+	}
+	
+	/**
+	 * If you were to write this complex number out as a string in polar notation, with a specified number of digits, this is what you'd get.
+	 * @return cast to a string, but in polar notation
+	 */
+	public String polarString(int dig) {            //convert to a string, but written in polar notation
+		return str(abs(),dig)+" ∠ "+str(arg(),dig); //absolute value, phaser, argument
 	}
 	
 ////////////////////////////////////////////// OBSCURE YET REALLY USEFUL FUNCTIONS //////////////////////////////////////////////
@@ -599,7 +622,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 	 * Complex conjugate-equals (x+yi -> x-yi)
 	 * @return the conjugated result
 	 */
-	public Complex conjeq() { set( re, -im); return this; } // conjugate-equals (if you ever need that)
+	public Complex conjeq() { im = -im;      return this; } // conjugate-equals
 	/**
 	 * Times-equals i (x+yi -> -y+xi)
 	 * @return the product
@@ -681,7 +704,8 @@ public class Complex extends Mafs { //this object represents a complex number.
 			if(L<=5.563E-309D) { return div(L).inv().div(L);   } //divide by L, invert, divide by L again
 			double k=1.0/L;      return mul(k).inv().muleq(k);   //if L > 2^-1024, solve 1/L beforehand to save on divisions
 		}
-		return conj().muleq(1.0/absq()); //general case: return the conjugate over the absolute square
+		double inv = 1.0/absq();            //compute the reciprocal of the absolute square
+		return new Complex(re*inv,-im*inv); //general case: return the conjugate over the absolute square
 	}
 	
 	/**
@@ -728,7 +752,9 @@ public class Complex extends Mafs { //this object represents a complex number.
 		if(isInf())              { return new Complex(inf,Math.abs(im)==inf?im:0); } //special case : something else infinite
 		if(lazyabs()>1.271E308D) { return mul(0.125D).cbrt().muleq(2D);            } //|z| overflows: return 2cbrt(z/8)
 		
-		return new Complex(0,arg()/3).exp().muleq(Math.cbrt(abs()));                 //general case : return e^(arg(z)/3)*cbrt(|z|)
+		double ang = arg()/3;                           //compute arg(z)/3
+		double mag = Math.cbrt(abs());                  //compute cbrt(|z|)
+		return new Complex(mag*cos(ang), mag*sin(ang)); //general case : return cbrt(|z|)*e^(arg(z)i/3)
 	}
 	
 	/**
@@ -745,22 +771,28 @@ public class Complex extends Mafs { //this object represents a complex number.
 	}
 	
 	/**
-	 * Standing for "logarithmus naturalis", or natural logarithm in English, this returns the base e logarithm of this number.  Its real part
-	 * is the logarithm of the absolute value, its imaginary part is the argument.  Technically, this returns the principal value of the
-	 * logarithm, since all non-zero numbers have infinitely many natural logarithms, but the principal value is whichever one has the
-	 * imaginary part closest to 0.
+	 * Returns the natural logarithm.  Its real part is the logarithm of the absolute value, its imaginary part iS the argument. Technically,
+	 * this returns the principal value of the logarithm, since all non-zero numbers have infinitely many natural logarithms, but the principal
+	 * value is whichever one has the imaginary part closest to 0.
 	 * @return the natural logarithm
 	 */
-	public Complex ln() { //ln(z)
+	public Complex log() { //log(z)
 		if(re==0||im==0) { return new Complex(Math.log(abs()), arg()); } //real/imaginary number: return ln|z|+arg(z)i
 		if(isInf())      { return new Complex(inf, arg());             } //infinite number: return ∞+arg(z)i
 		
-		double L=lazyabs();                        //take lazy abs for a quick sense of scale
-		if(L<=1.055E-154D || L>=9.481E+153D) {     //absolute square overflows/underflows:
-			return div(L).ln().addeq(Math.log(L)); //divide by L, take the log, and add back ln(L)
+		double L=lazyabs();                         //take lazy abs for a quick sense of scale
+		if(L<=1.055E-154D || L>=9.481E+153D) {      //absolute square overflows/underflows:
+			return div(L).log().addeq(Math.log(L)); //divide by L, take the log, and add back ln(L)
 		}
 		return new Complex(0.5D*Math.log(absq()), arg()); //general case: return ln(|z|²)/2+arg(z)i
 	}
+	
+	/**
+	 * Does the exact same thing as log.  Since some prefer to write it as log, while others prefer ln (Latin for "logarithmus naturalis"), I've
+	 * provided the option to represent it either way.
+	 * @return the natural logarithm
+	 */
+	public Complex ln() { return log(); } //ln(z)
 	
 	/**
 	 * This number raised to the power of integer a.  Computed via exponentiation by squaring, a highly efficient combination of squaring
@@ -821,7 +853,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 	public Complex pow(Complex a) {              //complex z ^ complex a
 		if(equals(e)) { return a.exp();   } //z==e        : return e^a
 		if(a.im==0)   { return pow(a.re); } //a is real   : return complex z ^ double a.re
-		return ln().muleq(a).exp();         //general case: return e to the power of the log times a
+		return log().muleq(a).exp();        //general case: return e to the power of the log times a
 	}
 	
 //////////////////// ROUNDING & MODULOS ////////////////////////////////////
@@ -906,18 +938,18 @@ public class Complex extends Mafs { //this object represents a complex number.
 	public Complex acosh() {                                                //arcosh
 		if(im==0&&Math.abs(re)<=1) { return new Complex(0,Math.acos(re)); } //real input [-1,1]: return acos*i
 		
-		if(absq()>1E18D) { return ln().addeq(log2); }            //huge input: return asymptotic approximation
+		if(absq()>1E18D) { return log().addeq(log2); }            //huge input: return asymptotic approximation
 		
-		return add( sq().subeq(1).sqrt().muleqcsgn(this) ).ln(); //else: return ln(z+csgn(z)√(z²-1))
+		return add( sq().subeq(1).sqrt().muleqcsgn(this) ).log(); //else: return ln(z+csgn(z)√(z²-1))
 	}
 	/** inverse sinh @return the inverse hyperbolic sine*/
 	public Complex asinh() {                                                //arsinh
 		if(re==0&&Math.abs(im)<=1) { return new Complex(0,Math.asin(im)); } //imag input [-i,i]: return asin*i
 		
-		if(absq()>1E18D) { return abs2().ln().addeq(log2).muleqcsgn(this); } //huge input: return asymptotic approximation
-		if(lazyabs()<=1E-4D) { return mul(Cpx.sub(1,sq().div(6))); }         //tiny input: return taylor's series
+		if(absq()>1E18D) { return abs2().log().addeq(log2).muleqcsgn(this); } //huge input: return asymptotic approximation
+		if(lazyabs()<=1E-4D) { return mul(Cpx.sub(1,sq().div(6))); }          //tiny input: return taylor's series
 		
-		return (abs2().addeq( sq().addeq(1).sqrt() )).ln().muleqcsgn(this);  //else: return csgn(z)ln(|z|+√(z²+1))
+		return (abs2().addeq( sq().addeq(1).sqrt() )).log().muleqcsgn(this);  //else: return csgn(z)ln(|z|+√(z²+1))
 	}
 	/** inverse tanh @return the inverse hyperbolic tangent*/
 	public Complex atanh() {                                                               //artanh
@@ -927,9 +959,9 @@ public class Complex extends Mafs { //this object represents a complex number.
 		if(re==0)            { return new Complex(0,Math.atan(im)); } //imag input: return atan*i
 		if(lazyabs()<=1E-4D) { return mul(sq().div(3).addeq(1));    } //tiny input: return taylor's series
 		
-		Complex ans=(add(1).diveq(Cpx.sub(1,this))).ln().muleq(0.5D); //else      : atanh(z)=ln((1+z)/(1-z))/2
-		if(im==0&&re>1) { ans.im=-HALFPI; }                           //(special case) z is real & >1: negate im to keep function odd
-		return ans;                                                   //return answer
+		Complex ans=(add(1).diveq(Cpx.sub(1,this))).log().muleq(0.5D); //else      : atanh(z)=ln((1+z)/(1-z))/2
+		if(im==0&&re>1) { ans.im=-HALFPI; }                            //(special case) z is real & >1: negate im to keep function odd
+		return ans;                                                    //return answer
 	}
 	
 	/**arc cos @return the principal value of the arc cosine*/
