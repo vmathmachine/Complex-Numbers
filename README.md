@@ -5,9 +5,9 @@ It was built specifically for Processing.js.
 The source code is heavily commented, and if you wanna look at it yourself, by all means! :)
 If you see something that doesn't quite make sense, you might be able to find more information on the wiki I wrote.
 
-This library has been successfully been tested on Windows 10 and Linux Mint (an Ubuntu based distro).  I see no reason why it shouldn't run on Mac OS or on earlier (or later) versions of Windows, but cannot guarantee it will.
+This library has been tested and proven functional on Windows 10 and on Ubuntu 20.04/Mint 20.x.  I see no reason why it shouldn't run on other versions of Windows and Linux, or on Mac OS, but I cannot guarantee it will.
 
-The latest version of Processing this has been tested on is Processing 3.5.4.
+The latest version of Processing this has been tested on is Processing 3.5.4.  Previous versions have been tested on Processing 4, so it should hopefully work there as well.
 
 This library does not depend on any other libraries, excluding of course the built-in java packages (such as java.lang and java.util).
 
@@ -34,7 +34,7 @@ Just to note, this library is currently going through a transition, and will soo
 # Details
 
 The Mafs class allows for several key math functionalities and variables that aren't provided by default.  It contains functions for converting doubles to strings, a function
-for modular exponentiation for doubles, the signum function, and several fundamental math constants (such as ∞, π/2, e, and the Euler-Mascheroni constant).  If you think I'm missing anything, please tell me.
+for modular exponentiation for doubles, the signum function, fast computation of sinh and cosh, round-off proof computation of sin and cos, and several fundamental math constants (such as ∞, π/2, e, and the Euler-Mascheroni constant).  If you think I'm missing anything, please tell me.
 
 The Complex class, which extends the Mafs class, contains all the Complex Number functionality.  All instances of the Complex class have two attributes: re and im (real and imaginary
 parts, both doubles).  There are many functions to this class, anywhere from converting to a string, to creating a deep copy, to adding instances, to taking the natural logarithm.
