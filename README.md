@@ -18,16 +18,16 @@ Some of you probably already know this....I didn't.  So, I'm putting this down f
 
 1. Make sure you have Processing downloaded on your system.
 2. Press the green dropdown "Code" button at the top of the Github page.  Press "Download ZIP".
-3. Once the ZIP is downloaded (presumably, it's in your Downloads folder.  If not, you'll have to look through your browser's settings to see where it sends downloads).  Now, you have to unzip the file.  For Windows, you do that by right clicking and pressing "extract all".  For Linux, you do that by right clicking and pressing "extract here".
+3. Once the ZIP is downloaded (presumably, it's in your Downloads folder.  If not, you'll have to look through your browser's settings to see where it sends downloads).  Now, you have to unzip the file.  For Windows, you do that by right clicking and pressing "extract all".  For Linux, you do that by right clicking and pressing "extract here".  For Mac, you do that by double clicking the .zip file.
 4. Enter the UNCOMPRESSED folder (the one that DOESN'T end in the .zip extension) named "Complex-Numbers-master".
 5. Right click the Folder labeled "ComplexNumberLibrary", hit "copy".  (On Windows, you might have to first enter another, nested folder also named "Complex-Numbers-master" before completing this step).
 6. If you have Processing open, close it.
 7. Go to your Processing sketchbook folder (the folder containing all of your current processing sketches).  Go to the libraries folder.
 8. In the libraries folder, hit paste (CTRL+V, or right-click + paste).
 9. Open Processing.  Hit import (at the top), libraries, then Complex Numbers.
-10. Make sure it works properly.  Try some of the example code below.
+10. Make sure it works properly.  Try some of the example code at the bottom.
 
-11. Once you've made sure your library is fully functional, feel free to delete the ZIP file from your downloads folder.  As well as any other copies of this library that haven't been moved to the Processing sketchbook.  This step is optional, of course.
+11. Once you've made sure your library is fully functional, feel free to delete the ZIP file from your downloads folder.  As well as any other copies of this library that haven't been moved to the Processing sketchbook (if you completed the steps above to a T, that should just be the copy in your Downloads folder).  This step is optional, of course.
 
 Just to note, this library is currently going through a transition, and will soon be "Github released", whatever that means.  After that, the download process might be a little different.  Or it might be exactly the same.  I honestly have no idea.
 
