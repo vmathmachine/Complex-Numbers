@@ -124,18 +124,18 @@ public class Cpx2 extends Cpx {
 			return logGammaReflector(z).subeq(loggamma(sub(1,z))); //otherwise: return ln(πcsc(πz))-lnΓ(1-z) (w/ a slight parity adjustment)
 		}
 		
-		////////////// INTEGER INPUTS //////////////////////
-	    if(z.isInt() && z.re<22) {                                      //if the input is an integer (and it's small enough)
-	    	return new Complex(Math.log((double)factorial((int)z.re))); //cast to an integer, compute the traditional factorial, return the log
-	    }
-	    
-	    //////////////// GENERAL CASE ///////////////////
-	    
-	    Complex eval = stirlingApprox(z.add(5)); //evaluate the Stirling approximation on z+5
-	    
-	    eval.subeq(logSum(z, z.add(1), z.add(2), z.add(3), z.add(4))); //subtract the 5 preceding logarithms
-	    
-	    return eval; //return the result
+	   	////////////// INTEGER INPUTS //////////////////////
+		if(z.isInt() && z.re<22) {                                        //if the input is an integer (and it's small enough)
+	    		return new Complex(Math.log((double)factorial((int)z.re-1))); //cast to an integer, compute the traditional factorial, return the log
+	    	}
+	    	
+	    	//////////////// GENERAL CASE ///////////////////
+	    	
+	    	Complex eval = stirlingApprox(z.add(5)); //evaluate the Stirling approximation on z+5
+	    	
+	    	eval.subeq(logSum(z, z.add(1), z.add(2), z.add(3), z.add(4))); //subtract the 5 preceding logarithms
+	    	
+	    	return eval; //return the result
 	}
 	
 	/**
@@ -145,15 +145,15 @@ public class Cpx2 extends Cpx {
 	 */
 	private static Complex stirlingApprox(Complex z) { //computes the Stirling approximation of lnΓ(z)
 		Complex sum=ln(z).muleq(z.sub(0.5)).subeq(z).addeq(0.5*(log2+logPI)); //initialize something to store our sum to (z-1/2)ln(z)-z+ln(2π)/2
-	    Complex expo=inv(z);                                                  //this'll store the (-2n+1)th power of z
-	    Complex iter=sq(expo);                                                //this is what expo will multiply by each time
-	    
-	    for(int n=2;n<15;n+=2) {                          //loop through B_2 to B_14 (ignore the 0s)
-	    	sum.addeq(mul(expo, Bernoulli[n]/(n*(n-1)))); //add B_(2n)/(n*(2n-1)*z^(2n-1))
-	    	if(n!=14) { expo.muleq(iter); }               //multiply expo by iter each time (except the last time)
-	    }
-	    
-	    return sum; //return result
+	    	Complex expo=inv(z);                                                  //this'll store the (-2n+1)th power of z
+	   	Complex iter=sq(expo);                                                //this is what expo will multiply by each time
+	    	
+	    	for(int n=2;n<15;n+=2) {                          //loop through B_2 to B_14 (ignore the 0s)
+	   	 	sum.addeq(mul(expo, Bernoulli[n]/(n*(n-1)))); //add B_(2n)/(n*(2n-1)*z^(2n-1))
+	    		if(n!=14) { expo.muleq(iter); }               //multiply expo by iter each time (except the last time)
+	    	}
+	    	
+		return sum; //return result
 	}
 	
 	/**
@@ -189,12 +189,12 @@ public class Cpx2 extends Cpx {
 		if(z.re<0.5) { //input is less than 1/2
 			return digamma(sub(1,z)).subeq( div(Math.PI, tan(z.mul(Math.PI))) ); //calculate reflection formula, ψ(z) = ψ(1-z)-πcot(πz)
 		}
-	    
-	    Complex eval = digammaApprox(z.add(5)); //evaluate the digamma approximation at z+5
-	    
-	    for(int n=0;n<=4;n++) { eval.subeq(z.add(n).inv()); } //subtract the inverses of the 5 preceding numbers
-	    
-	    return eval; //return the result
+	    	
+	    	Complex eval = digammaApprox(z.add(5)); //evaluate the digamma approximation at z+5
+	    	
+	    	for(int n=0;n<=4;n++) { eval.subeq(z.add(n).inv()); } //subtract the inverses of the 5 preceding numbers
+	    	
+	    	return eval; //return the result
 	}
 	
 	/**
@@ -205,13 +205,13 @@ public class Cpx2 extends Cpx {
 	 */
 	private static Complex digammaApprox(Complex z) { //an approximation for the digamma function over the right branch of the complex plane
 		Complex sum=ln(z).subeq(z.mul(2).inv()); //initialize something to store our sum to ln(z)-1/(2z)
-	    Complex expo=sq(inv(z));                 //this'll store the (-2n)th power of z
-	    Complex iter=expo.copy();                //this is what expo will multiply by each time
+	    	Complex expo=sq(inv(z));                 //this'll store the (-2n)th power of z
+	   	Complex iter=expo.copy();                //this is what expo will multiply by each time
 		
 		for(int n=2;n<15;n+=2) {                  //loop through B_2 to B_14 (ignore the 0s)
 			sum.subeq(mul(expo, Bernoulli[n]/n)); //subtract B_n/(n*z^n)
 			if(n!=7) { expo.muleq(iter); }        //multiply expo by iter each time (except the last time)
-	    }
+		}
 		
 		return sum; //return the result
 	}
@@ -242,17 +242,17 @@ public class Cpx2 extends Cpx {
 		}
 	    
 		//////////// GENERAL CASE ///////////////////
-	    Complex eval = polygammaApprox(m, z.add(5)); //evaluate ±ψ(m,z+5)
-	    
-	    long fact=factorial(m); //compute m!
-	    
-	    for(int n=0;n<=4;n++) { //loop through the 5 preceding numbers
-	    	eval.subeq(div(fact,z.add(n).pow(m+1))); //subtract m!/(z+n)^(m+1)
-	    }
-	    
-	    if((m&1)==1) { eval.negeq(); } //if m is odd, negate
-	    
-	    return eval; //return the result
+	    	Complex eval = polygammaApprox(m, z.add(5)); //evaluate ±ψ(m,z+5)
+	    	
+	    	long fact=factorial(m); //compute m!
+	    	
+	    	for(int n=0;n<=4;n++) { //loop through the 5 preceding numbers
+	    		eval.subeq(div(fact,z.add(n).pow(m+1))); //subtract m!/(z+n)^(m+1)
+	    	}
+	    	
+	    	if((m&1)==1) { eval.negeq(); } //if m is odd, negate
+	    	
+	    	return eval; //return the result
 	}
 	
 	/**
