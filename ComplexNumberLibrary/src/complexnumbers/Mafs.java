@@ -13,7 +13,7 @@ public class Mafs {
 	
 	/** Positive infinity */
 	public static double inf=1.0D/0;
-	/** Euler's Number */
+	/** Euler's Number.  2.71828... */
 	public static double e=2.71828182845904524D;
 	/** π/2 */
 	public static double HALFPI=1.57079632679489662D;
@@ -33,7 +33,7 @@ public class Mafs {
 	/////////////////// STRING BASED STUFF ///////////////////
 	
 	/**
-	 * removes (or "unsplices") the substring between chop1 (inclusive) and chop2 (exclusive)
+	 * Removes (or "unsplices") the substring between chop1 (inclusive) and chop2 (exclusive)
 	 * @param s the input string
 	 * @param chop1 the starting index of the removed substring
 	 * @param chop2 the ending index of the removed substring (+1, like with iterators)
@@ -44,7 +44,7 @@ public class Mafs {
 	}
 	
 	/**
-	 * Converts a double to a string like a human would do it
+	 * Converts a double to a string like a human would (without .0).
 	 * @param dub input double
 	 * @return output string
 	 */
@@ -67,7 +67,7 @@ public class Mafs {
 	}
 	
 	/**
-	 * Converts a double to a string like a human would do it, but with a customizable number of decimal places
+	 * Converts a double to a string like a human would, but with a specific number of decimal places.
 	 * (-1 defaults to the previous function)
 	 * @param dub input double
 	 * @param dig number of digits
@@ -122,7 +122,7 @@ public class Mafs {
 	////////////////// MATH FUNCTIONS ////////////////////
 	
 	/**
-	 * The factorial of an integer, represented with 64 bits (returns 2^63-1 if it overflows)
+	 * The factorial of an integer, represented with 64-bit longs. (returns 2^63-1 if it overflows)
 	 * @param n input
 	 * @return n!
 	 */
@@ -134,15 +134,15 @@ public class Mafs {
 	}
 	
 	/**
-	 * A double raised to the power of an integer, calculated using exponentiation by squaring.
+	 * Raises double to integer power.  Calculated via exponentiation by squaring.
 	 * 
-	 * @param d - the base
-	 * @param a - the exponent
+	 * @param d the base
+	 * @param a the exponent
 	 * @return the base raised to the exponent
 	 */
-	public static double dPow(double d, int a) { //compute double d ^ integer a (exponentiation by squaring)
-		if(a<0)  { return dPow(1/d,-a); } //a is negative: return (1/d)^(-a)
-		                                  //general case:
+	public static double pow(double d, int a) { //compute double d ^ integer a (exponentiation by squaring)
+		if(a<0)  { return pow(1/d,-a); } //a is negative: return (1/d)^(-a)
+		                                 //general case:
 	
 		double ans=1;                   //return value, d^a (init to 1 in case a==0)
 		int ex=a;                       //copy of a
@@ -162,18 +162,18 @@ public class Mafs {
 	}
 	
 	/**
-	 * The sign/signum function.
+	 * The sign (or signum) function.
 	 * 
-	 * @param d - the input
-	 * @return - 1 if d is positive, -1 if d is negative, 0 if d is 0.
+	 * @param d the input
+	 * @return 1 if d is positive, -1 if d is negative, 0 if d is 0.
 	 */
 	public static int sgn(double d) { if(d==0) { return 0; } return d>0 ? 1 : -1; } //return 0 if input is 0, else return sign
 	
 	/**
 	 * The complex sign function.
 	 * 
-	 * @param d - the input
-	 * @return - -1 if d is negative, 1 if non-negative
+	 * @param d the input
+	 * @return -1 if d is negative, 1 if non-negative
 	 */
 	public static int csgn(double d) { return d>=0 ? 1 : -1; } //return -1 if negative, 1 if non-negative.
 	
@@ -181,9 +181,9 @@ public class Mafs {
 	 * A variation of the modulo who's range is always from 0 to d2.
 	 * When d2 is positive, the output will always be positive (or rather, non-negative), and since d2 is almost never negative,
 	 * this function is called "modPos", standing for modulo positive.
-	 * @param d1 - the dividend
-	 * @param d2 - the divisor
-	 * @return - the remainder
+	 * @param d1 the dividend
+	 * @param d2 the divisor
+	 * @return the remainder
 	 */
 	public static double modPos(double d1, double d2) { //returns the mod, but never negative (except when d2 is negative)
 		double ret = d1%d2;                                 //perform built-in mod
@@ -191,7 +191,7 @@ public class Mafs {
 	}
 	
 	/**
-	 * A slight variation of the sine such that, if the angle is a multiple of π, the output is always 0.
+	 * A slight variation of the sine.  The variation makes it so, if the angle is a multiple of π, the output is always 0.
 	 * @param d the input
 	 * @return the sine
 	 */
@@ -201,7 +201,7 @@ public class Mafs {
 	}
 	
 	/**
-	 * A slight variation of the cosine such that, if the angle is an odd multiple of π/2, the output is always 0
+	 * A slight variation of the cosine.  The variation makes it so, if the angle is an odd multiple of π/2, the output is always 0.
 	 * @param d the input
 	 * @return the cosine
 	 */
@@ -211,8 +211,8 @@ public class Mafs {
 	}
 	
 	/**
-	 * A slight variation of the tangent such that, if the angle is a multiple of π, the output is always 0, and if the angle is an odd
-	 * multiple of π/2, the output is always ∞.
+	 * A slight variation of the tangent.  The variation makes it so, if the angle is a multiple of π, the output is always 0, and if the
+	 * angle is an odd multiple of π/2, the output is always ∞.
 	 * @param d the input
 	 * @return the tangent
 	 */
@@ -224,12 +224,12 @@ public class Mafs {
 	}
 	
 	/**
-	 * The hyperbolic sine & cosine both computed simultaneously.  The name is inspired by the <code>FSINCOS</code> instruction used in
+	 * Hyperbolic sine & cosine both computed simultaneously.  The name is inspired by the <code>FSINCOS</code> instruction used in
 	 * assembly code, which is slower than <code>cos</code> and slower than <code>sin</code>, but faster than doing them both.
 	 * This function calculates the exponential and its reciprocal, then uses arithmetic to find the <code>sinh</code> and <code>cosh</code>.
 	 * 
-	 * @param d - the hyperbolic argument
-	 * @return - the array {sinh(d), cosh(d)}
+	 * @param d the hyperbolic argument
+	 * @return the array {sinh(d), cosh(d)}
 	 */
 	public static double[] fsinhcosh(double d) { //returns the cosh & sinh, computed simultaneously
 		if(Math.abs(d)<1E-4D) { double sq = d*d; return new double[] {d+d*sq/6, 1+0.5*sq+sq*sq/24}; }                   //small input: return Taylor's series
