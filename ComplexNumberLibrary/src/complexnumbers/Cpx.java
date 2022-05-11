@@ -36,20 +36,25 @@ public class Cpx extends Mafs {
 	 */
 	public static Complex two () { return new Complex(2); } //create instance of  2+0i
 	/**
-	 * Casts a double to a complex
+	 * Returns the number i
+	 * @return the complex number 0+1i
+	 */
+	public static Complex i() { return new Complex(0,1); } //create instance of 0+1i
+	/**
+	 * Casts a <code>double</code> to a <code>Complex</code>.
 	 * @param d the double
 	 * @return d+0i
 	 */
 	public static Complex complex(double d) { return new Complex(d); } //create instance of  d+0i (cast double to Complex)
 	/**
-	 * Creates an imaginary number
+	 * Creates an imaginary number.
 	 * @param d the imaginary part
 	 * @return 0+di
 	 */
 	public static Complex iTimes (double d) { return new Complex(0,d); } //create instance of  0+di
 	
 	/**
-	 * Casts a string to a complex (invalid configuration returns NaN)
+	 * Casts a <code>String</code> to a <code>Complex</code>. (Invalid configuration returns NaN)
 	 * @param s the complex as a string
 	 * @return the complex number
 	 */
@@ -103,7 +108,7 @@ public class Cpx extends Mafs {
 	}
 	
 	/**
-	 * Constructs a complex number in polar notation
+	 * Constructs a complex number in polar notation.
 	 * @param r the absolute value
 	 * @param ang the argument
 	 * @return the complex number
@@ -113,7 +118,7 @@ public class Cpx extends Mafs {
 	//we will now overload (most of) the functions from complex so that the complex numbers can be called as parameters
 	
 	/**
-	 * Casts a complex to a string
+	 * Casts a <code>Complex</code> to a <code>String</code>.
 	 * @param z complex input
 	 * @return the string
 	 */
@@ -134,13 +139,13 @@ public class Cpx extends Mafs {
 	public static double im(Complex z) { return z.im; }
 	
 	/**
-	 * The absolute square (absolute value squared)
+	 * Absolute square (absolute value squared)
 	 * @param z complex input
 	 * @return absolute square
 	 */
 	public static double absq(Complex z) { return z.absq(); } //square absolute value
 	/**
-	 * The absolute value
+	 * Absolute value
 	 * @param z complex input
 	 * @return absolute value
 	 */
@@ -167,94 +172,21 @@ public class Cpx extends Mafs {
 	 * @param b complex addend
 	 * @return sum
 	 */
-	public static Complex add(Complex a, Complex b) { return a.add(b); } //these functions perform the four basic arithmetic
+	public static Complex add(Complex a, Complex b) { return a.add(b); }
 	/**
-	 * Subtracts two complexes
-	 * @param a complex minuend (the number we subtract from)
-	 * @param b complex subtrahend (the number we subtract)
-	 * @return difference
-	 */
-	public static Complex sub(Complex a, Complex b) { return a.sub(b); } //operations on two complex numbers
-	/**
-	 * Multiplies two complexes
-	 * @param a complex multiplicand (the first number in a multiplication)
-	 * @param b complex multiplier (the second number in a multiplication)
-	 * @return product
-	 */
-	public static Complex mul(Complex a, Complex b) { return a.mul(b); }
-	/**
-	 * Divides two complexes
-	 * @param a complex dividend (the first number in a division)
-	 * @param b complex divisor (the number we divide by)
-	 * @return quotient
-	 */
-	public static Complex div(Complex a, Complex b) { return a.div(b); }
-	
-	/**
-	 * Adds a complex to a double
+	 * Adds a complex to a real
 	 * @param a complex addend
 	 * @param b real addend
 	 * @return sum
 	 */
-	public static Complex add(Complex a, double b) { return a.add(b); } //these functions perform the four basic arithmetic
+	public static Complex add(Complex a, double b) { return a.add(b); }
 	/**
-	 * Subtracts a double from a complex
-	 * @param a complex minuend
-	 * @param b real subtrahend
-	 * @return difference
-	 */
-	public static Complex sub(Complex a, double b) { return a.sub(b); } //operations on one real and one complex number
-	/**
-	 * Multiplies a complex by a double
-	 * @param a complex multiplicand
-	 * @param b real multiplier
-	 * @return product
-	 */
-	public static Complex mul(Complex a, double b) { return a.mul(b); }
-	/**
-	 * Divides a complex by a double
-	 * @param a complex dividend
-	 * @param b real divisor
-	 * @return quotient
-	 */
-	public static Complex div(Complex a, double b) { return a.div(b); }
-	
-	/**
-	 * Adds a double to a complex
+	 * Adds a real to a complex
 	 * @param a real addend
 	 * @param b complex addend
 	 * @return sum
 	 */
 	public static Complex add(double a, Complex b) { return b.add(a); }
-	/**
-	 * Subtracts a complex from a double
-	 * @param a real minuend
-	 * @param b complex subtrahend
-	 * @return difference
-	 */
-	public static Complex sub(double a, Complex b) { return b.neg().addeq(a); }
-	/**
-	 * Multiplies a double by a complex
-	 * @param a real multiplicand
-	 * @param b complex multiplier
-	 * @return product
-	 */
-	public static Complex mul(double a, Complex b) { return b.mul(a); }
-	/**
-	 * Divides a double by a complex
-	 * @param a real dividend
-	 * @param b complex divisor
-	 * @return quotient
-	 */
-	public static Complex div(double a, Complex b) { return inv(b).muleq(a); }
-	
-	/**
-	 * Returns the input negated
-	 * @param z complex input
-	 * @return negated copy
-	 */
-	public static Complex neg(Complex z) { return z.neg(); }
-	
 	/**
 	 * Adds 2 complexes and one real
 	 * @param a First complex addend
@@ -263,15 +195,6 @@ public class Cpx extends Mafs {
 	 * @return sum
 	 */
 	public static Complex add(Complex a, Complex b, double c) { return a.add(b).addeq(c); } //3 input add (with doubles)
-	/**
-	 * Multiplies 2 complexes and one real
-	 * @param a First complex input
-	 * @param b Second complex input
-	 * @param c Third real input
-	 * @return product
-	 */
-	public static Complex mul(Complex a, Complex b, double c) { return a.mul(b).muleq(c); } //3 input multiply (with doubles)
-	
 	/**
 	 * Adds an indefinite number of complex numbers
 	 * @param a First complex addend
@@ -285,19 +208,6 @@ public class Cpx extends Mafs {
 		return ret;                           //return the result
 	}
 	/**
-	 * Multiplies an indefinite number of complex numbers
-	 * @param a First complex input
-	 * @param b Second complex input
-	 * @param c The rest of the complex inputs
-	 * @return Their collective product
-	 */
-	public static Complex mul(Complex a, Complex b, Complex... c) { //unlimited input multiply (all Complex)
-		Complex ret=a.mul(b);                 //multiply initial two inputs
-		for(Complex c2: c) { ret.muleq(c2); } //multiply equal all other inputs
-		return ret;                           //return the result
-	}
-	
-	/**
 	 * Adds one real to an indefinite number of complexes
 	 * @param a First real addend
 	 * @param b Second complex addend
@@ -307,6 +217,70 @@ public class Cpx extends Mafs {
 	public static Complex add(double a, Complex b, Complex... c) { //unlimited input sum (1 double + n Complex)
 		Complex ret=b.add(a);                 //add initial 2 inputs
 		for(Complex c2: c) { ret.addeq(c2); } //add equal all other inputs
+		return ret;                           //return the result
+	}
+	
+	/**
+	 * Subtracts two complexes
+	 * @param a complex minuend (the number we subtract from)
+	 * @param b complex subtrahend (the number we subtract)
+	 * @return difference
+	 */
+	public static Complex sub(Complex a, Complex b) { return a.sub(b); }
+	/**
+	 * Subtracts a real from a complex
+	 * @param a complex minuend
+	 * @param b real subtrahend
+	 * @return difference
+	 */
+	public static Complex sub(Complex a, double b) { return a.sub(b); }
+	/**
+	 * Subtracts a complex from a real
+	 * @param a real minuend
+	 * @param b complex subtrahend
+	 * @return difference
+	 */
+	public static Complex sub(double a, Complex b) { return new Complex(a-b.re,-b.im); }
+	
+	/**
+	 * Multiplies two complexes
+	 * @param a complex multiplicand (the first number in a multiplication)
+	 * @param b complex multiplier (the second number in a multiplication)
+	 * @return product
+	 */
+	public static Complex mul(Complex a, Complex b) { return a.mul(b); }
+	/**
+	 * Multiplies a complex by a real
+	 * @param a complex multiplicand
+	 * @param b real multiplier
+	 * @return product
+	 */
+	public static Complex mul(Complex a, double b) { return a.mul(b); }
+	/**
+	 * Multiplies a real by a complex
+	 * @param a real multiplicand
+	 * @param b complex multiplier
+	 * @return product
+	 */
+	public static Complex mul(double a, Complex b) { return b.mul(a); }
+	/**
+	 * Multiplies 2 complexes and one real
+	 * @param a First complex input
+	 * @param b Second complex input
+	 * @param c Third real input
+	 * @return product
+	 */
+	public static Complex mul(Complex a, Complex b, double c) { return a.mul(b).muleq(c); } //3 input multiply (with doubles)
+	/**
+	 * Multiplies an indefinite number of complex numbers
+	 * @param a First complex input
+	 * @param b Second complex input
+	 * @param c The rest of the complex inputs
+	 * @return Their collective product
+	 */
+	public static Complex mul(Complex a, Complex b, Complex... c) { //unlimited input multiply (all Complex)
+		Complex ret=a.mul(b);                 //multiply initial two inputs
+		for(Complex c2: c) { ret.muleq(c2); } //multiply equal all other inputs
 		return ret;                           //return the result
 	}
 	/**
@@ -321,6 +295,35 @@ public class Cpx extends Mafs {
 		for(Complex c2: c) { ret.muleq(c2); } //multiply equal all other inputs
 		return ret;                           //return the result
 	}
+	
+	/**
+	 * Divides two complexes
+	 * @param a complex dividend (the first number in a division)
+	 * @param b complex divisor (the number we divide by)
+	 * @return quotient
+	 */
+	public static Complex div(Complex a, Complex b) { return a.div(b); }
+	/**
+	 * Divides a complex by a double
+	 * @param a complex dividend
+	 * @param b real divisor
+	 * @return quotient
+	 */
+	public static Complex div(Complex a, double b) { return a.div(b); }
+	/**
+	 * Divides a real by a complex
+	 * @param a real dividend
+	 * @param b complex divisor
+	 * @return quotient
+	 */
+	public static Complex div(double a, Complex b) { return inv(b).muleq(a); }
+	
+	/**
+	 * Returns the input negated
+	 * @param z complex input
+	 * @return negated copy
+	 */
+	public static Complex neg(Complex z) { return z.neg(); }
 	
 ////////////////RECIPROCAL, SQUARE ROOT, & OTHER IMPORTANT FUNCTIONS////////////
 	
@@ -618,13 +621,14 @@ public class Cpx extends Mafs {
 	
 	/**
 	 * Returns the sum of the logarithms of each complex input.  It does this by computing the product, taking the logarithm, adding
-	 * 2πi times the log offset, and performing some overflow/underflow corrections along the way.
+	 * 2πi times the log offset, and performing some overflow/underflow corrections along the way.  Only one logarithm is needed to
+	 * calculate this.
 	 * @param z each complex input
 	 * @return the sum of their logarithms
 	 */
 	public static Complex logSum(Complex... z) {
 		ArrayList<Complex> inp = new ArrayList<Complex>();
-		for(Complex c : z) { inp.add(c); } //convert array to arraylsit
+		for(Complex c : z) { inp.add(c); } //convert array to arraylist
 		
 		Complex prod = one();            //initialize product
 		Wrapper change = new Wrapper(0); //initialize change
@@ -638,6 +642,7 @@ public class Cpx extends Mafs {
 	}
 	
 	/**
+	 * Complicated.
 	 * For a set of complex inputs, this gives us the logarithm offset, the product of the inputs, and the number of times we overflowed
 	 * minus the number of times we underflowed while performing this calculation.  This function is private because the wrapper class
 	 * is private and because the information we gain from it has to be interpreted properly
