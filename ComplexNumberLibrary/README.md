@@ -7,7 +7,7 @@ If you see something that doesn't quite make sense, you might be able to find mo
 
 This library has been tested and proven functional on Windows 10 and on Ubuntu 20.04/Mint 20.x.  I see no reason why it shouldn't run on other versions of Windows and Linux, or on Mac OS, but I cannot guarantee it will.
 
-The latest version of Processing this has been tested on is Processing 3.5.4.  Previous versions have been tested on Processing 4, so it should hopefully work there as well.
+It has been tested and proven functional on Processing 3.5.4 and on Processing 4.0 Beta 8.
 
 This library does not depend on any other libraries, excluding of course the built-in java packages (such as java.lang and java.util).
 
