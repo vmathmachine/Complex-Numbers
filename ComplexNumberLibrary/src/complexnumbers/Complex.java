@@ -7,12 +7,17 @@ package complexnumbers;
 /**
  * A Complex Object.
  * 
- * <br>Each instance of <code>Complex</code> represents a complex number.
- * <br>It has two components, <code>re</code> and <code>im</code>, each double precision floating points representing the
- * real and imaginary parts of the number.  There are no illegal permutations of <code>re</code> and <code>im</code>, and thus
- * both attributes are public.
+ * <br><br>Each instance of <code>Complex</code> represents a complex number.  That is, a linear combination of 1 and the square root of -1 
+ * (also known as i).  The multiple of 1 is known as the real part, while the multiple of i is known as the imaginary part.  Complex numbers
+ * play a very important role in many fields.  Simpler examples of such fields might include rotations, matrix algebra, and differential 
+ * equations, while more complicated fields might include AC circuits and quantum mechanics.  They are also the foundation for many intricate
+ * fractalsm, such as the Mandelbrot set.  The complex class is double precision, meaning each component is represented with 64-bit floating
+ * points, totaling 128 bits (16 bytes) of data.
  * 
- * <br>It should be noted that, due to the way this was implemented, the Infinite numbers and NaN numbers are practically interchangeable.
+ * <br><br>It has two components, <code>re</code> and <code>im</code>, each <code>double</code>s representing the real and imaginary parts
+ * of the number.  There are no illegal permutations of <code>re</code> and <code>im</code>, and thus both attributes are public.
+ * 
+ * <br><br>It should be noted that, due to the way this was implemented, Infinite numbers and NaN numbers are practically interchangeable.
  * 
  * @author Math Machine
  * @version 1.0.0
@@ -27,100 +32,102 @@ public class Complex extends Mafs { //this object represents a complex number.
 	/** The imaginary part. Since there are no illegal numbers, this attribute is public. */
 	public double im;
 	
-	/** (static variable) If true, cbrt(-1)=-1.  If false, cbrt(-1)=(1+√(3)i)/2. */
+	/** If true, cbrt(-1)=-1; If false, cbrt(-1)=(1+√(3)i)/2. */
 	public static boolean cbrt_Option=true;
 	
-	/** (static variable) If true, small components are omitted from string conversion due to roundoff. If false, they are preserved for accuracy.*/
+	/** If true, small components are omitted from string conversion due to roundoff; If false, they are preserved for accuracy.*/
 	public static boolean omit_Option=true;
 	
 /////////////////////////////////////////////// CONSTRUCTORS ////////////////////////////////////
 	
-	/** Default constructor: returns 0+0i*/
+	/** Default constructor: Constructs 0+0i*/
 	public Complex() { re=im=0; }
 	/**
-	 * Constructor with real and imaginary parts as parameters, constructs x+yi
-	 * @param x - real part
-	 * @param y - imaginary part
+	 * Constructs x+yi.
+	 * @param x real part
+	 * @param y imaginary part
 	 */
 	public Complex(double x, double y) { re=x; im=y; }
 	/**
-	 * Constructor with one parameter, constructs x+0i.
-	 * @param x - real part
+	 * Constructs x+0i.
+	 * @param x real part
 	 */
 	public Complex(double x) { re=x; im=0; }
 	
 	/**
-	 * Pseudo-constructor with real and imaginary parts as parameters, constructs x+yi, before performing a check to avoid
-	 * the undesirable permutations of NaN±∞i or ±∞+NaN*i.  See <code>validate()</code> for more information.
+	 * Pseudo-constructor with a check.  Constructs x+yi, before performing a check to avoid
+	 * the undesirable permutations of NaN±∞i or ±∞+NaN*i.  See <a href="#validate()">validate()</a> for more information.
 	 * 
-	 * @param x - the real part
-	 * @param y - the imaginary part
-	 * @return - the constructed object
+	 * @param x the real part
+	 * @param y the imaginary part
+	 * @return the constructed object
 	 */
 	public Complex compCheck(double x, double y) { return new Complex(x,y).validate(); }
 	
 ////////////////////////////////////////////// BASIC FUNCTIONS /////////////////////////////////
 	
-	/** Returns a deep copy @return a deep copy */
+	/** Returns a deep copy.
+	 * @return a deep copy */
 	@Override
 	public Complex clone() { return new Complex(re,im); } //create clone
-	/** Returns a deep copy @return a deep copy */
+	/** Returns a deep copy.
+	 * @return a deep copy */
 	public Complex copy () { return new Complex(re,im); } //create deep copy
 	
 	/**
-	 * Setter - sets the real and imaginary parts
-	 * @param x - the new real part
-	 * @param y - the new imaginary part
+	 * Sets to x+yi
+	 * @param x the new real part
+	 * @param y the new imaginary part
 	 */
 	public void set(double x, double y) { re=x;    im=y;    }
 	/**
-	 * Setter - sets this equal to a deep copy of z
-	 * @param z - what gets copied
+	 * Sets this equal to z
+	 * @param z what gets copied to this instance
 	 */
 	public void set(Complex z)          { re=z.re; im=z.im; }
 	/**
-	 * Setter - sets this equal to the real number x+0i
-	 * @param x - the new real part
+	 * Sets to x+0i
+	 * @param x the new real part
 	 */
 	public void set(double x)           { re=x;    im=0;    }
 	/**
-	 * Setter - sets this equal to the imaginary number 0+yi
-	 * @param y - the new imaginary part
+	 * Sets to 0+yi
+	 * @param y the new imaginary part
 	 */
 	public void setI(double y)          { re=0;    im=y;    }
 	
 	/**
-	 * Setter - sets equal to x+yi, then performs a check to avoid the undesirable permutations of NaN±∞i or ±∞+NaN*i.
-	 * See <code>validate()</code> for more information.
-	 * @param x - the new real part
-	 * @param y - the new imaginary part
+	 * Sets equal to x+yi, then performs a check.  This check is to avoid the undesirable permutations of NaN±∞i or ±∞+NaN*i.
+	 * See <a href="#validate()">validate()</a> for more information.
+	 * @param x the new real part
+	 * @param y the new imaginary part
 	 */
 	public void setCheck(double x, double y) { re=x; im=y; validate(); }
 	
 	/**
-	 * Setter - sets the components in polar notation, setting the magnitude and angle rather than the real and imaginary parts
-	 * @param r - the new absolute value
-	 * @param ang - the new argument
+	 * Sets polar components (magnitude and angle).
+	 * @param r the new absolute value
+	 * @param ang the new argument
 	 */
 	public void setPolar(double r, double ang) { re=r*cos(ang); im=r*sin(ang); validate(); }
 	
 	/**
-	 * Setter - sets the real part to x
+	 * Sets the real part to x.  Does not change imaginary part.
 	 * @param x the real part
 	 */
 	public void setRe(double x) { re=x; }
 	/**
-	 * Setter - sets the imaginary part to y
+	 * Sets the imaginary part to y.  Does not change the real part.
 	 * @param y the imaginary part
 	 */
 	public void setIm(double y) { im=y; }
 	/**
-	 * Setter - sets the absolute value to r (without changing the angle)
+	 * Sets the absolute value to r.  Does not change the angle
 	 * @param r the absolute value
 	 */
 	public void setAbs(double r) { muleq(r/abs()); }
 	/**
-	 * Setter - sets the argument to a (without changing the absolute value)
+	 * Sets the argument to a.  Does not change the magnitude.
 	 * @param a the argument
 	 */
 	public void setArg(double a) { double abs = abs(); set(abs*cos(a), abs*sin(a)); }
@@ -133,39 +140,43 @@ public class Complex extends Mafs { //this object represents a complex number.
 	public boolean equals(Complex z) { return (re==z.re && im==z.im) || (isNaN() && z.isNaN()); }
 	/**
 	 * Tests for equality with x+yi.
-	 * @param x - the real part
-	 * @param y - the imaginary part
-	 * @return  - whether or not they equal
+	 * @param x the real part
+	 * @param y the imaginary part
+	 * @return whether or not they equal
 	 */
 	public boolean equals(double x, double y) { return (re==x && im==y) || (isNaN() && (x!=x||y!=y)); }
 	/**
-	 * Tests for equality with a real number x.  Returns true if re==x and im==0.
-	 * @param x - the real number
-	 * @return  - whether or not they equal.
+	 * Tests for equality with x+0i.  Returns true if re==x and im==0.
+	 * @param x the real number
+	 * @return  whether or not they equal.
 	 */
 	public boolean equals(double x) { return (re==x && im==0) || (isNaN() && x!=x); }
 	/**
-	 * Tests for equality with imaginary number y.  Returns true if re==0 and im==y
-	 * @param y - the imaginary number
-	 * @return  - whether or not they equal
+	 * Tests for equality with 0+yi.  Returns true if re==0 and im==y
+	 * @param y the imaginary number
+	 * @return  whether or not they equal
 	 */
 	public boolean equalsI(double y) { return (re==0 && im==y) || (isNaN() && y!=y); } //test for equality w/ an imaginary number
 	
 	/**
 	 * Tests for equality with the number r∠ang (in polar notation).
-	 * @param r - the magnitude
-	 * @param ang - the angle
-	 * @return - whether or not they equal
+	 * @param r the magnitude
+	 * @param ang the angle
+	 * @return whether or not they equal
 	 */
 	public boolean equalsPolar(double r, double ang) { return re==r*cos(ang) && im==r*sin(ang); }
 	
-	/** Returns true if the object is a complex with the same value */
+	/** Returns true if the object is a <code>Complex</code> with the same value.
+	 * @return true if they equal*/
 	@Override
 	public boolean equals(Object o) { //test for equality with another object
 		if(o.getClass()==Complex.class) { return equals((Complex)o); }
 		return false;
 	}
 	
+	/** Computes the hash code.
+	 * @return the hash code
+	 */
 	@Override
 	public int hashCode() { //returns the hash code
 		if(isNaN()) { return -585754751; } //if NaN, return the same hashCode we'd get from NaN+0i
@@ -180,8 +191,8 @@ public class Complex extends Mafs { //this object represents a complex number.
 	}
 	
 	/**
-	 * Performs a check to avoid the undesirable state of NaN±∞i or ±∞+NaN*i, replacing them with 0±∞i and ±∞+0i, respectively.  It then
-	 * returns the result.  This function is a mutator.
+	 * Performs a check to avoid the undesirable states of NaN±∞i or ±∞+NaN*i.  In doing so, it replaces them with 0±∞i and ±∞+0i, respectively.
+	 * It then returns the result.  This function is a mutator.
 	 * 
 	 * These states typically arise when dividing (0+yi)/0 or (x+0i)/0.  The actual answer is supposed to be 0±∞i or ±∞+0i, but the
 	 * result comes up with NaN, since technically that 0 component could be anything.  It should be noted, this library does not do a
@@ -200,26 +211,34 @@ public class Complex extends Mafs { //this object represents a complex number.
 	
 ///////////////////////////////////////////// CLASSIFYING NUMBERS /////////////////////////////
 	
-	/** Whether the input is infinite @return whether the number is infinite*/
+	/** Returns whether the input is infinite.
+	 * @return whether the number is infinite*/
 	public boolean isInf()     { return Double.isInfinite(re) || Double.isInfinite(im); } //this is true if the complex number is infinite
-	/** @return whether the number is NaN*/
+	/** Returns whether the input is NaN.
+	 * @return whether the number is NaN*/
 	public boolean isNaN()     { return re!=re || im!=im;                               } //this is true if the complex number is NaN
 	
-	/** @return whether the number is real*/
+	/** Returns whether the input is real.
+	 * @return whether the number is real*/
 	public boolean isReal()    { return im==0;                     } //test for real
-	/** @return whether the number is imaginary*/
+	/** Returns whether the input is imaginary.
+	 * @return whether the number is imaginary*/
 	public boolean isImag()    { return re==0;                     } //test for imaginary
-	/** @return whether the number is a real integer*/
+	/** Returns whether the input is a real integer.
+	 * @return whether the number is a real integer*/
 	public boolean isInt()     { return im==0 && re%1==0;          } //test for integer
-	/** @return whether the number is a whole number (a non-negative integer)*/
+	/** Returns whether the input is a whole number.
+	 * @return whether the number is a whole number (a non-negative integer)*/
 	public boolean isWhole()   { return im==0 && re%1==0 && re>=0; } //whole number
-	/** @return whether the number is a natural number (a positive integer)*/
+	/** Returns whether the input is a natural number.
+	 * @return whether the number is a natural number (a positive integer)*/
 	public boolean isNatural() { return im==0 && re%1==0 && re> 0; } //natural number
 	
 //////////////////////////////////////////// CAST TO A STRING ////////////////////////////////
 	
 	/**
-	 * If you were to write this complex number out as a string (in rectangular notation), this is what you'd get.
+	 * Casts to a <code>String</code>.  If you were to write this complex number out as a string (in rectangular notation), this is what
+	 * you'd get.
 	 * @return this as a string
 	 */
 	@Override
@@ -228,7 +247,8 @@ public class Complex extends Mafs { //this object represents a complex number.
 	}
 	
 	/**
-	 * If you were to write this complex number out as a string in rectangular notation, with a specified number of digits, this is what you'd get. 
+	 * Casts to a string with specific precision.  If you were to write this complex number out as a string in rectangular notation,
+	 * with a specified number of digits, this is what you'd get. 
 	 * @param dig the number of digits
 	 * @return this as a string
 	 */
@@ -239,6 +259,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 			else if(re<0)         { return "Negative Overflow"; } // Negative Overflow
 			else                  { return "Overflow";          } //[regular] Overflow
 		}
+		if(isNaN()) { return "NaN"; }                             //special case: NaN, return NaN
 		
 		Complex sto=copy();                                       //copy input
 		if(omit_Option) {                                         //if we've elected to omit small components:
@@ -260,7 +281,8 @@ public class Complex extends Mafs { //this object represents a complex number.
 	}
 	
 	/**
-	 * If you were to write this complex number out as a string (in polar notation), this is what you'd get.
+	 * Casts to a <code>String</code> in polar notation.  If you were to write this complex number out as a string (in polar notation), this is 
+	 * what you'd get.
 	 * @return cast to a string, but in polar notation
 	 */
 	public String polarString() { //convert to a string, but written in polar notation
@@ -268,7 +290,8 @@ public class Complex extends Mafs { //this object represents a complex number.
 	}
 	
 	/**
-	 * If you were to write this complex number out as a string in polar notation, with a specified number of digits, this is what you'd get.
+	 * Casts to a <code>String</code> in polar notation with a specific number of digits.  If you were to write this complex number out as a
+	 * string, in polar notation, with a specified number of digits, this is what you'd get.
 	 * @return cast to a string, but in polar notation
 	 */
 	public String polarString(int dig) {            //convert to a string, but written in polar notation
@@ -278,7 +301,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 ////////////////////////////////////////////// OBSCURE YET REALLY USEFUL FUNCTIONS //////////////////////////////////////////////
 	
 	/**
-	 * "lazy absolute value", a minimal cost test which returns the approximate magnitude of the number.
+	 * Lazy absolute value. A minimal cost test which returns the approximate magnitude of the number.
 	 * It's useful for certain algorithms where overflow/underflow can be a problem.  Namely, where you need to use one algorithm when
 	 * the input is small, and another algorithm when the input is large, but there's a large range of values where both algorithms will
 	 * perform equally well.
@@ -289,7 +312,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 	}
 	
 	/**
-	 * Whether or not the input is the principal square root of its square.  For real numbers, this calculation is just z>=0.
+	 * Whether the input is the principal square root of its square.  For real numbers, this calculation is just z>=0.
 	 * But for complex numbers, it's a bit more complicated.  This function often comes in handy when determining the sign of a square
 	 * root, for instance, in the <code>acosh</code> and <code>asinh</code> functions.
 	 * @return true if and only if z==√(z²)
@@ -297,63 +320,62 @@ public class Complex extends Mafs { //this object represents a complex number.
 	public boolean isRoot() { return re>0 || re==0 && im>=0; }
 	
 	/**
-	 * "Complex signum", an official function which returns 1 if the input is the square root of its square, -1 otherwise.  In other words,
+	 * Complex signum. An official function which returns 1 if the input is the square root of its square, -1 otherwise.  In other words,
 	 * it's equal to z/√(z²) for z!=0.
 	 * @return z/√(z²) if z!=0, 1 if z==0.
 	 */
 	public int csgn() { return isRoot()?1:-1; }
 	
 	/**
-	 * "Multiply by csgn", returns a copy of the input multiplied by the csgn of a.
+	 * Multiply by csgn. Returns a copy of the input multiplied by the csgn of a.
 	 * This gets its own function because the calculation doesn't require any multiplications.
-	 * @param a - the number we multiply by the sign of.
-	 * @return - the product
+	 * @param a the number we multiply by the sign of.
+	 * @return the product
 	 */
 	public Complex mulcsgn  (double a) { return a>=0 ? copy() : neg(); }
 	/**
-	 * "Multiply by csgn", returns a copy of the input multiplied by the csgn of z.
+	 * Multiply by csgn. Returns a copy of the input multiplied by the csgn of z.
 	 * This gets its own function because the calculation doesn't require any multiplications.
-	 * @param z - the number we multiply by the sign of.
-	 * @return - the product
+	 * @param z the number we multiply by the sign of.
+	 * @return the product
 	 */
 	public Complex mulcsgn  (Complex z) { return z.isRoot() ? copy() : neg(); } //multiply by csgn of z & create new instance
 	/**
-	 * "Multiply equals csgn", multiplies the input by the csgn of a, then returns the result.  Mutates the original object.
+	 * Multiply equals csgn. Multiplies the input by the csgn of a, then returns the result.  Mutates the original object.
 	 * This gets its own function because the calculation doesn't require any multiplications.
-	 * @param a - the number we multiply by the sign of
-	 * @return - the product
+	 * @param a the number we multiply by the sign of
+	 * @return the product
 	 */
 	public Complex muleqcsgn(double a) { return a>=0 ? this : negeq(); } //multiply equals by sgn of a
 	/**
-	 * "Multiply equals csgn", multiplies the input by the csgn of a, then returns the result.  Mutates the original object.
+	 * Multiply equals csgn. Multiplies the input by the csgn of a, then returns the result.  Mutates the original object.
 	 * This gets its own function because the calculation doesn't require any multiplications.
-	 * @param z - the number we multiply by the sign of
-	 * @return - the product
+	 * @param z the number we multiply by the sign of
+	 * @return the product
 	 */
 	public Complex muleqcsgn(Complex z) { return z.isRoot() ? this : negeq(); } //multiply equals by csgn of z
 	
 	/**
-	 * "Secondary absolute value", a non-official function which behaves similarly to the absolute value for real inputs.
-	 * While √(z²) is often just shortened to |z| whenever we assume the input is a real number, for complex numbers, this is no
-	 * longer the case.  However, since this still comes up for complex numbers just as it does real numbers, and since square roots
-	 * are computationally expensive, I've added this function to evaluate √(z²) without using any square roots (or even any
-	 * multiplications).
+	 * "Secondary absolute value", √(z²). A non-official math function which behaves similarly to the absolute value for real inputs.
+	 * While √(z²) is often just shortened to |z| when the input is a real number, for complex numbers, this is no longer the case.
+	 * However, since this still comes up for complex numbers just as it does real numbers, and since square roots are computationally
+	 * expensive, I've added this function to evaluate √(z²) without using any square roots (or even any multiplications).
 	 * @return √(z²)
 	 */
 	public Complex abs2() { return mulcsgn(this); } //secondary absolute value, return √(z²)
 	
 	/**
-	 * Returns a copy that's been rotated by a specified amount counterclockwise in the complex plane.
-	 * @param ang - the angle we rotate by
-	 * @return - the rotated copy
+	 * Copies and rotates ang radians counterclockwise in the complex plane.
+	 * @param ang the angle we rotate by
+	 * @return the rotated copy
 	 */
 	public Complex rotate(double ang) { //returns a rotated copy
 		double cos = cos(ang), sin = sin(ang); return new Complex(re*cos-im*sin,re*sin+im*cos);
 	}
 	/**
-	 * "Rotate Equals", rotates the number by a specified amount counterclockwise in the complex plane.  Returns the result.
-	 * @param ang - the angle we rotate by
-	 * @return - the rotated result
+	 * Rotate-equals by ang radians counterclockwise in the complex plane.
+	 * @param ang the angle we rotate by
+	 * @return the rotated result
 	 */
 	public Complex rotateEq(double ang) { //rotates & returns
 		double cos = cos(ang), sin = sin(ang); set(re*cos-im*sin,re*sin+im*cos); return this;
@@ -364,109 +386,109 @@ public class Complex extends Mafs { //this object represents a complex number.
 	//create a new instance
 	
 	/**
-	 * Addition with a complex number
-	 * @param a - the complex number we add (known as the addend)
+	 * Adds complex number
+	 * @param a the complex number we add (known as the addend)
 	 * @return the sum
 	 */
 	public Complex add(Complex a) { return new Complex(re+a.re, im+a.im); }
 	/**
-	 * Addition with x+yi
-	 * @param x the real part of the addend
-	 * @param y the imaginary part of the addend
-	 * @return the sum
+	 * Adds x+yi
+	 * @param x addend's real part
+	 * @param y addend's imaginary part
+	 * @return sum
 	 */
 	public Complex add(double x, double y) { return new Complex(re+x, im+y); }
 	/**
-	 * Addition with a real double
-	 * @param a - the real addend
-	 * @return - the sum
+	 * Adds real number
+	 * @param a real addend
+	 * @return sum
 	 */
 	public Complex add(double a) { return new Complex(re+a, im  ); }
 	/**
-	 * Addition with imaginary double
-	 * @param a - the imaginary number we add
-	 * @return - the sum
+	 * Adds imaginary number
+	 * @param a imaginary addend
+	 * @return sum
 	 */
 	public Complex addI(double a) { return new Complex(re, im+a); }
 	
 	/**
-	 * Subtraction with a complex number
-	 * @param a - the complex number we subtract (known as the subtrahend)
+	 * Subtracts complex number
+	 * @param a the complex number we subtract (known as the subtrahend)
 	 * @return the difference
 	 */
 	public Complex sub(Complex a) { return new Complex(re-a.re, im-a.im); }
 	/**
-	 * Subtraction with x+yi
-	 * @param x the real part of the subtrahend
-	 * @param y the imaginary part of the subtrahend
-	 * @return the difference
+	 * Subtracts x+yi
+	 * @param x the subtrahend's real part
+	 * @param y the subtrahend's imaginary part
+	 * @return difference
 	 */
 	public Complex sub(double x, double y) { return new Complex(re-x, im-y); }
 	/**
-	 * Subtraction with a real double
-	 * @param a - the real subtrahend
-	 * @return - the difference
+	 * Subtracts real number
+	 * @param a real subtrahend
+	 * @return difference
 	 */
 	public Complex sub(double a) { return new Complex(re-a, im  ); }
 	/**
-	 * Subtraction with imaginary double
-	 * @param a - the imaginary number we subtract
-	 * @return - the difference
+	 * Subtracts imaginary number
+	 * @param a imaginary subtrahend
+	 * @return difference
 	 */
 	public Complex subI(double a) { return new Complex(re, im-a); }
 	
 	/**
-	 * Multiplication with a complex number
-	 * @param a - the complex number we multiply by (known as the multiplier)
+	 * Multiplies by complex number
+	 * @param a the complex number we multiply by (known as the multiplier)
 	 * @return the product
 	 */
 	public Complex mul(Complex a) { return new Complex(re*a.re-im*a.im, re*a.im+im*a.re); }
 	/**
-	 * Multiplication with x+yi
-	 * @param x the real part of the multiplier
-	 * @param y the imaginary part of the multiplier
-	 * @return the product
+	 * Multiplies x+yi
+	 * @param x the multiplier's real part
+	 * @param y the multiplier's imaginary part
+	 * @return product
 	 */
 	public Complex mul(double x, double y) { return new Complex(re*x-im*y, re*y+im*x); }
 	/**
-	 * Multiplication with a real double
-	 * @param a - the real multiplier
-	 * @return - the product
+	 * Multiplies real number
+	 * @param a real multiplier
+	 * @return product
 	 */
 	public Complex mul(double a) { return new Complex(re*a, im*a); }
 	/**
-	 * Multiplication with imaginary double
-	 * @param a - the imaginary number we multiply by
-	 * @return - the product
+	 * Multiplies imaginary number
+	 * @param a imaginary multiplier
+	 * @return product
 	 */
 	public Complex mulI(double a) { return new Complex(-im*a, re*a); }
 	
 	/**
-	 * Division with a complex number
-	 * @param a - the complex number we divide by (known as the divisor)
+	 * Divides by complex number
+	 * @param a the complex number we divide by (known as the divisor)
 	 * @return the quotient
 	 */
 	public Complex div(Complex a) { return mul(a.inv()); }
 	/**
-	 * Division with x+yi
-	 * @param x the real part of the divisor
-	 * @param y the imaginary part of the divisor
-	 * @return the quotient
+	 * Divides x+yi
+	 * @param x divisor's real part
+	 * @param y divisor's imaginary part
+	 * @return quotient
 	 */
 	public Complex div(double x, double y) { return div(new Complex(x,y)); }
 	/**
-	 * Division with a real double
-	 * @param a - the divisor
-	 * @return - the quotient
+	 * Divides by real number
+	 * @param a real divisor
+	 * @return quotient
 	 */
 	public Complex div(double a) {
 		if(Math.abs(a)<=5.562684646268E-309D) { return new Complex(re/a, im/a); } //for small a, we divide each component by a
 		double rec=1.0D/a; return new Complex(re*rec, im*rec);                    //else, multiply each component by 1/a
 	}
 	/**
-	 * Division with imaginary double
-	 * @param a - the imaginary number we divide by
-	 * @return - the quotient
+	 * Divides by imaginary number
+	 * @param a imaginary divisor
+	 * @return the quotient
 	 */
 	public Complex divI(double a) {
 		if(Math.abs(a)<=5.562684646268E-309D) { return new Complex(im/a, -re/a); } //for small a, we divide each component by a
@@ -476,112 +498,112 @@ public class Complex extends Mafs { //this object represents a complex number.
 	//assign equals
 	
 	/**
-	 * Plus-equals a complex number
-	 * @param a - the number we add (or addend)
+	 * Plus-equals complex number
+	 * @param a the number we add (or addend)
 	 * @return the sum
 	 */
 	public Complex addeq(Complex a) { re+=a.re; im+=a.im; return this; } // +=
 	/**
 	 * Plus-equals x+yi
-	 * @param x - the real part of the addend
-	 * @param y - the imaginary part of the addend
-	 * @return the sum
+	 * @param x addend's real part
+	 * @param y addend's imaginary part
+	 * @return sum
 	 */
 	public Complex addeq(double x, double y) { re+=x; im+=y; return this; }
 	/**
-	 * Plus-equals a real double
-	 * @param a - the real addend
-	 * @return the sum
+	 * Plus-equals real number
+	 * @param a real addend
+	 * @return sum
 	 */
 	public Complex addeq(double a) { re+=a; return this; }
 	/**
-	 * Plus-equals an imaginary double
-	 * @param a - the imaginary addend
-	 * @return the sum
+	 * Plus-equals imaginary number
+	 * @param a imaginary addend
+	 * @return sum
 	 */
 	public Complex addeqI(double a) { im+=a; return this; }
 	
 	
 	/**
-	 * Minus-equals a complex number
-	 * @param a - the number we subtract (or subtrahend)
+	 * Minus-equals complex number
+	 * @param a the number we subtract (or subtrahend)
 	 * @return the difference
 	 */
 	public Complex subeq(Complex a) { re-=a.re; im-=a.im; return this; } // -=
 	/**
 	 * Minus-equals x+yi
-	 * @param x - the real part of the subtrahend
-	 * @param y - the imaginary part of the subtrahend
-	 * @return the difference
+	 * @param x subtrahend's real part
+	 * @param y subtrahend's imaginary part
+	 * @return difference
 	 */
 	public Complex subeq(double x, double y) { re-=x; im-=y; return this; }
 	/**
-	 * Minus-equals a real double
-	 * @param a - the real subtrahend
-	 * @return the difference
+	 * Minus-equals real number
+	 * @param a real subtrahend
+	 * @return difference
 	 */
 	public Complex subeq(double a) { re-=a; return this; }
 	/**
-	 * Minus-equals an imaginary double
-	 * @param a - the imaginary subtrahend
-	 * @return the difference
+	 * Minus-equals imaginary number
+	 * @param a imaginary subtrahend
+	 * @return difference
 	 */
 	public Complex subeqI(double a) { im-=a; return this; } // Complex -= double*i
 	
 	
 	/**
-	 * Times-equals a complex number
-	 * @param a - the number we multiply by (or multiplier)
+	 * Times-equals complex number
+	 * @param a the number we multiply by (or multiplier)
 	 * @return the product
 	 */
 	public Complex muleq(Complex a) { set(re*a.re-im*a.im, re*a.im+im*a.re); return this; } // *=
 	/**
 	 * Times-equals x+yi
-	 * @param x - the real part of the multiplier
-	 * @param y - the imaginary part of the multiplier
-	 * @return the product
+	 * @param x multiplier's real part
+	 * @param y multiplier's imaginary part
+	 * @return product
 	 */
 	public Complex muleq(double x, double y) { set(re*x-im*y, re*y+im*x); return this; }
 	/**
-	 * Times-equals a real double
-	 * @param a - the real multiplier
-	 * @return the product
+	 * Times-equals real number
+	 * @param a real multiplier
+	 * @return product
 	 */
 	public Complex muleq(double a) { re*=a; im*=a; return this; }
 	/**
-	 * Times-equals an imaginary double
-	 * @param a - the imaginary multiplier
-	 * @return the product
+	 * Times-equals imaginary number
+	 * @param a imaginary multiplier
+	 * @return product
 	 */
 	public Complex muleqI(double a) { set(-im*a, re*a); return this; }
 	
 	
 	/**
-	 * Divide-equals a complex number
-	 * @param a - the number we divide by (or divisor)
+	 * Divide-equals complex number
+	 * @param a the number we divide by (or divisor)
 	 * @return the quotient
 	 */
 	public Complex diveq(Complex a) { return muleq(a.inv()); } // /=
 	/**
 	 * Divide-equals x+yi
-	 * @param x - the real part of the divisor
-	 * @param y - the imaginary part of the divisor
+	 * @param x divisor's real part
+	 * @param y divisor's imaginary part
 	 * @return the quotient
 	 */
 	public Complex diveq(double x, double y) { return diveq(new Complex(x,y)); }
 	/**
-	 * Divide-equals a real double
-	 * @param a - the real divisor
-	 * @return the quotient
+	 * Divide-equals real number
+	 * @param a real divisor
+	 * @return quotient
 	 */
 	public Complex diveq(double a) {
 		if(Math.abs(a)<=5.562684646268E-309D) { re/=a; im/=a; return this; }
 		return muleq(1.0D/a);
 	}
 	/**
-	 * Divide-equals an imaginary double
-	 * @param a - the imaginary divisor
-	 * @return the quotient
+	 * Divide-equals imaginary number
+	 * @param a imaginary divisor
+	 * @return quotient
 	 */
 	public Complex diveqI(double a) {
 		if(Math.abs(a)<=5.562684646268E-309D) { set(im/a,-re/a); return this; }
@@ -592,23 +614,23 @@ public class Complex extends Mafs { //this object represents a complex number.
 	
 	//new instance
 	/**
-	 * Negate (AKA multiply by -1)
+	 * Negates copy (multiplies it by -1)
 	 * @return a negated copy
 	 */
 	public Complex neg () { return new Complex(-re,-im); } //negation
 	/**
-	 * Complex conjugate (the same number, but with a negated imaginary part)
+	 * Complex conjugates copy (negates imaginary part)
 	 * @return a conjugated copy
 	 */
 	public Complex conj() { return new Complex( re,-im); } //complex conjugate
 	/**
-	 * Multiply by i
-	 * @return a copy that's multiplied by i; rotated 90 degrees counter-clockwise
+	 * Multiplies by i
+	 * @return a copy that's been multiplied by i; rotated 90 degrees counter-clockwise
 	 */
 	public Complex mulI() { return new Complex(-im, re); } //multiply by i
 	/**
-	 * Divide by i
-	 * @return a copy that's divided by i; multiplied by -i; rotated 90 degrees clockwise
+	 * Divides by i
+	 * @return a copy that's been divided by i; multiplied by -i; rotated 90 degrees clockwise
 	 */
 	public Complex divI() { return new Complex( im,-re); } //divide   by i
 	
@@ -636,20 +658,22 @@ public class Complex extends Mafs { //this object represents a complex number.
 	
 /////////////////////////////////////// COMPLEX PARTS ////////////////////////////////////////////////////
 	
-	/** Getter - returns the real part @return the real part */
+	/** Gets the real part.
+	 * @return real part */
 	public double re() { return re; } //real part
-	/** Getter - returns the imaginary part @return the imaginary part */
+	/** Gets the imaginary part. 
+	 * @return imaginary part */
 	public double im() { return im; } //imaginary part
 	
 	/**
-	 * "Absolulte square", the square of the absolute value, equal to re²+im²
-	 * @return the absolute square
+	 * Absolute square.  The square of the absolute value, equal to re²+im².
+	 * @return absolute square
 	 */
 	public double absq() { return re*re+im*im; } //absolute square
 	
 	/**
-	 * "Absolute value", the distance from 0 on the complex plane, equal to √(re²+im²).
-	 * @return the absolute value
+	 * Absolute value.  The Pythagorean distance from 0 on the complex plane, equal to √(re²+im²).
+	 * @return absolute value
 	 */
 	public double abs()  {                       //absolute value
 		if(im==0) { return Math.abs(re); } //if it's real, return abs(Re(x))
@@ -664,7 +688,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 	}
 	
 	/**
-	 * "Argument", the angle of the input, measured counterclockwise from the positive real axis.
+	 * Argument (angle).  The angle of the input, measured counterclockwise from the positive real axis.
 	 * @return the argument
 	 */
 	public double arg()  {                             //polar argument
@@ -674,7 +698,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 	}
 	
 	/**
-	 * "Sign/Signum", the input divided by its absolute value.  Similar to putting a hat over a vector.
+	 * Sign (or signum).  The input divided by its absolute value.  Similar to putting a hat over a vector.
 	 * In the special case that the input is 0, the result is 0.
 	 * @return the sign
 	 */
@@ -690,7 +714,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 ///////////////////////////////////////// RECIPROCAL, SQUARE ROOT, AND OTHER IMPORTANT FUNCTIONS ////////////////////
 	
 	/**
-	 * "Inverse", the reciprocal of the input.  Equivalent to the conjugate divided by the absolute square
+	 * Inverse (or reciprocal).  Equivalent to the conjugate divided by the absolute square.
 	 * @return the reciprocal
 	 */
 	public Complex inv() {                       //reciprocal
@@ -709,16 +733,18 @@ public class Complex extends Mafs { //this object represents a complex number.
 	}
 	
 	/**
-	 * "Square".  (x+yi)² = (x²-y²)+2xy*i = (x+y)(x-y) + 2xyi
+	 * Square.  Multiplication of a number by itself.  (x+yi)² = (x²-y²)+2xy*i = (x+y)(x-y) + 2xyi.
 	 * @return the square
 	 */
 	public Complex sq () { return new Complex((re+im)*(re-im),2*re*im); } //z²
-	/** @return the cube */
+	/**
+	 * Cube.  Multiplication of a number by its square. 
+	 * @return the cube */
 	public Complex cub() { return mul(sq());                            } //z³
 	
 	/**
-	 * The square root.  More specifically, the principal square root, whichever of the two square roots has the largest real part.
-	 * If it's a tie, we return whichever one has the largest imaginary part.
+	 * Square root.  More specifically, the principal square root, whichever of the two square roots has the largest real part.
+	 * If it's a tie, whichever one has the largest imaginary part is returned.
 	 * @return the square root
 	 */
 	public Complex sqrt() { //√(z)
@@ -740,9 +766,9 @@ public class Complex extends Mafs { //this object represents a complex number.
 	}
 	
 	/** 
-	 * The cube root.  More specifically, the principal cube root.  We simply return whichever of the 3 cube roots has the largest real part.
-	 * If cbrt_Option is true, we'll make an exception for negative reals, instead returning the negative real cube root.  Otherwise, we return
-	 * that negative cube root times (-1-√(3)i)/2.
+	 * Cube root.  More specifically, the principal cube root.  Returns whichever of the 3 cube roots has the largest real part.
+	 * If cbrt_Option is true, an exception is made for negative reals, instead returning the negative real cube root.  Otherwise, the
+	 * cube root of a negative real will have an angle of +60°, or π/3 radians.
 	 * @return the cube root
 	 */
 	public Complex cbrt() { //cube root of complex z
@@ -758,7 +784,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 	}
 	
 	/**
-	 * Exponential.  Euler's number raised to the power of this number.  It has an absolute value of e^re and an angle equal to im.
+	 * Natural exponential.  Euler's number raised to the power of this number.  In polar notation, it's exp(re)∠im.
 	 * @return the exponential
 	 */
 	public Complex exp() { //e^z
@@ -771,9 +797,9 @@ public class Complex extends Mafs { //this object represents a complex number.
 	}
 	
 	/**
-	 * Returns the natural logarithm.  Its real part is the logarithm of the absolute value, its imaginary part iS the argument. Technically,
-	 * this returns the principal value of the logarithm, since all non-zero numbers have infinitely many natural logarithms, but the principal
-	 * value is whichever one has the imaginary part closest to 0.
+	 * Natural logarithm.  Equal to the log of the absolute value plus i times the polar argument.
+	 * Technically, this returns the principal value of the logarithm, since all non-zero numbers have infinitely many natural logarithms,
+	 * but the principal value is whichever one has the imaginary part closest to 0.
 	 * @return the natural logarithm
 	 */
 	public Complex log() { //log(z)
@@ -788,8 +814,8 @@ public class Complex extends Mafs { //this object represents a complex number.
 	}
 	
 	/**
-	 * Does the exact same thing as log.  Since some prefer to write it as log, while others prefer ln (Latin for "logarithmus naturalis"), I've
-	 * provided the option to represent it either way.
+	 * Natural logarithm.  Some prefer to write it as log, while others prefer ln (Latin for "logarithmus naturalis").  Both ln
+	 * and log return the same thing, so which one you use is purely a matter of convention and/or preference.
 	 * @return the natural logarithm
 	 */
 	public Complex ln() { return log(); } //ln(z)
@@ -797,12 +823,12 @@ public class Complex extends Mafs { //this object represents a complex number.
 	/**
 	 * This number raised to the power of integer a.  Computed via exponentiation by squaring, a highly efficient combination of squaring
 	 * and multiplication that's ultimately equivalent to the base multiplied by itself a times (but more efficient).
-	 * @param a - the exponent
-	 * @return - the power
+	 * @param a exponent
+	 * @return power
 	 */
 	public Complex pow(int a) { //Complex z ^ int a (exponentiation by squaring)
 		
-		if(im==0) { return new Complex(dPow(re,a)); } //input is real: use the other implementation for doubles (results in ~1/4 the # of multiplications)
+		if(im==0) { return new Complex(pow(re,a)); } //input is real: use the other implementation for doubles (results in ~1/4 the # of multiplications)
 		
 		if(a<0)  { return inv().pow(-a); } //a is negative: return (1/z)^(-a)
 		//general case:
@@ -824,11 +850,11 @@ public class Complex extends Mafs { //this object represents a complex number.
 	}
 	
 	/**
-	 * This number raised to the power of the real double a.  Computed by raising the absolute value to the power of a, multiplying the
-	 * angle by a, and returning the result.  If this is a real number, we use dPow to reduce multiplications.  If a is an integer, we
-	 * use the previous pow function to improve performance and accuracy.
-	 * @param a - the exponent
-	 * @return - the result
+	 * This number raised to the power of the real number a.  Computed by raising the absolute value to the power of a, multiplying the
+	 * angle by a, and returning the result.  If this is a real number, we use <code>Mafs.pow</code> to reduce multiplications.  If a is
+	 * an integer, we use the <code>pow(int)</code> function to improve performance and accuracy.
+	 * @param a the exponent
+	 * @return the result
 	 */
 	public Complex pow(double a) { //complex z ^ double a
 		if(Math.abs(a)<=2147483647 && a%1==0) { return pow((int)a);                 } //exponent is an integer: there's a faster (and more accurate) way of doing this
@@ -846,9 +872,9 @@ public class Complex extends Mafs { //this object represents a complex number.
 	
 	/**
 	 * This number raised to the power of complex number a.  Computed by multiplying the logarithm by a, then taking the exponential.
-	 * If a is real, we use the <code>pow(double a)</code> function.  If this is Euler's number, we return the <code>exp</code> function.
-	 * @param a - the exponent
-	 * @return - the result
+	 * If a is real, we use the <code>pow(double)</code> function.  If this is Euler's number, we return the <code>exp</code> function.
+	 * @param a the exponent
+	 * @return the result
 	 */
 	public Complex pow(Complex a) {              //complex z ^ complex a
 		if(equals(e)) { return a.exp();   } //z==e        : return e^a
@@ -858,15 +884,19 @@ public class Complex extends Mafs { //this object represents a complex number.
 	
 //////////////////// ROUNDING & MODULOS ////////////////////////////////////
 	
-	/** @return the floor of the real part*/
+	/** Floor of the real part.
+	 * @return the floor of the real part*/
 	public double floor() { return Math.floor(re); }
-	/** @return the ceiling of the real part*/
+	/** Ceiling of the real part.
+	 * @return the ceiling of the real part*/
 	public double ceil () { return Math.ceil(re);  }
-	/** @return the real part rounded to the nearest int*/
+	/** Round the real part to the nearest integer.
+	 * @return the real part rounded to the nearest integer*/
 	public double round() { return Math.round(re); }
 	
 	/**
-	 * @param a what we're modulo-ing with
+	 * Modulo.
+	 * @param a divisor in the modulo
 	 * @return this minus the largest integer multiple of a that fits in this. (Read the code for more information)
 	 */
 	public Complex mod(Complex a) {         //Complex modulo (sign standard: +%+ = +, +%- = -, -%+ = +, -%- = -)
@@ -876,9 +906,9 @@ public class Complex extends Mafs { //this object represents a complex number.
 	//* "largest" meaning the largest integer that multiplies by a
 	
 	/**
-	 * Modulo, version 2.  Here, we subtract a very specific integer multiple of a, whichever integer multiple causes our output to be
+	 * Modulo, version 2.  Here, a very specific integer multiple of a is subtracted: whichever integer multiple causes the output to be
 	 * closest to 0.
-	 * @param a - what we're modulo-ing with
+	 * @param a the divisor of the modulo
 	 * @return the secondary modulo.
 	 */
 	public Complex mod_v2(Complex a) {             //Secondary modulo: drops sign convention & just returns whichever modulo is closer to 0
@@ -890,7 +920,8 @@ public class Complex extends Mafs { //this object represents a complex number.
 	
 //////////////////// TRIGONOMETRY //////////////////////////////////////
 	
-	/** complex cosine @return the cosine*/
+	/** Complex cosine
+	 * @return the cosine*/
 	public Complex cos() {                                                  //cos
 		if(im==0) { return new Complex(cos(re));       } //real input: return cos
 		if(re==0) { return new Complex(Math.cosh(im)); } //imag input: return cosh
@@ -898,7 +929,8 @@ public class Complex extends Mafs { //this object represents a complex number.
 		double[] sinhcosh=fsinhcosh(im);                 //compute sinh & cosh of imag part
 		return new Complex(cos(re)*sinhcosh[1],-sin(re)*sinhcosh[0]); //cos(x+yi) = cos(x)cosh(y)-sin(x)sinh(y)i
 	}
-	/** complex sine @return the sine*/
+	/** Complex sine
+	 * @return the sine*/
 	public Complex sin() {                                                    //sin
 		if(im==0) { return new Complex(sin(re));         } //real input: return sin
 		if(re==0) { return new Complex(0,Math.sinh(im)); } //imag input: return sinh*i
@@ -906,7 +938,8 @@ public class Complex extends Mafs { //this object represents a complex number.
 		double[] sinhcosh=fsinhcosh(im);                   //compute sinh & cosh of imag part
 		return new Complex(sin(re)*sinhcosh[1],cos(re)*sinhcosh[0]); //sin(x+yi) = sin(x)cosh(y)+cos(x)sinh(y)i
 	}
-	/** complex tangent @return the tangent*/
+	/** Complex tangent
+	 * @return the tangent*/
 	public Complex tan() {                                                        //tan
 		if(im==0) 	 { return new Complex(tan(re));          } //real input: return tan
 		if(re==0)    { return new Complex(0,Math.tanh(im));  } //imag input: return tan*i
@@ -917,24 +950,34 @@ public class Complex extends Mafs { //this object represents a complex number.
 		return new Complex(sin(2*re)*denom, sinhcosh[0]*denom); //tan(x+yi) = (sin(2x)+sinh(2y)i)/(cos(2x)+cosh(2y))
 	}
 	
-	/** hyperbolic cosine @return the hyperbolic cosine*/
+	/** Hyperbolic cosine
+	 * @return the hyperbolic cosine*/
 	public Complex cosh() { return mulI().cos();          } //cosh
-	/** hyperbolic sine @return the hyperbolic sine*/
+	/** Hyperbolic sine
+	 * @return the hyperbolic sine*/
 	public Complex sinh() { return mulI().sin().diveqI(); } //sinh
-	/** hyperbolic tangent @return the hyperbolic tangent*/
+	/** Hyperbolic tangent
+	 * @return the hyperbolic tangent*/
 	public Complex tanh() { return mulI().tan().diveqI(); } //tanh
 	
-	/** secant    @return    secant*/ public Complex sec () { return cos ().inv(); } //sec
-	/** cosecant  @return  cosecant*/ public Complex csc () { return sin ().inv(); } //csc
-	/** cotangent @return cotangent*/ public Complex cot () { return tan ().inv(); } //cot
+	/** Secant
+	 * @return secant*/    public Complex sec () { return cos ().inv(); } //sec
+	/** Cosecant
+	 * @return cosecant*/  public Complex csc () { return sin ().inv(); } //csc
+	/** Cotangent
+	 * @return cotangent*/ public Complex cot () { return tan ().inv(); } //cot
 	
-	/** hyperbolic    secant @return hyperbolic    secant*/ public Complex sech() { return cosh().inv(); } //sech
-	/** hyperbolic  cosecant @return hyperbolic  cosecant*/ public Complex csch() { return sinh().inv(); } //csch
-	/** hyperbolic cotangent @return hyperbolic cotangent*/ public Complex coth() { return tanh().inv(); } //coth
+	/** Hyperbolic secant
+	 * @return hyperbolic secant*/    public Complex sech() { return cosh().inv(); } //sech
+	/** Hyperbolic cosecant
+	 * @return hyperbolic cosecant*/  public Complex csch() { return sinh().inv(); } //csch
+	/** Hyperbolic cotangent
+	 * @return hyperbolic cotangent*/ public Complex coth() { return tanh().inv(); } //coth
 	
 //////////////////////////////////////////////////////////////////////////INVERSE TRIGONOMETRY////////////////////////////////////////////////////////////////////////////////////
 	
-	/** inverse cosh @return the inverse hyperbolic cosine*/
+	/** Inverse cosh
+	 * @return inverse hyperbolic cosine*/
 	public Complex acosh() {                                                //arcosh
 		if(im==0&&Math.abs(re)<=1) { return new Complex(0,Math.acos(re)); } //real input [-1,1]: return acos*i
 		
@@ -942,7 +985,8 @@ public class Complex extends Mafs { //this object represents a complex number.
 		
 		return add( sq().subeq(1).sqrt().muleqcsgn(this) ).log(); //else: return ln(z+csgn(z)√(z²-1))
 	}
-	/** inverse sinh @return the inverse hyperbolic sine*/
+	/** Inverse sinh
+	 * @return inverse hyperbolic sine*/
 	public Complex asinh() {                                                //arsinh
 		if(re==0&&Math.abs(im)<=1) { return new Complex(0,Math.asin(im)); } //imag input [-i,i]: return asin*i
 		
@@ -951,7 +995,8 @@ public class Complex extends Mafs { //this object represents a complex number.
 		
 		return (abs2().addeq( sq().addeq(1).sqrt() )).log().muleqcsgn(this);  //else: return csgn(z)ln(|z|+√(z²+1))
 	}
-	/** inverse tanh @return the inverse hyperbolic tangent*/
+	/** Inverse tanh
+	 * @return inverse hyperbolic tangent*/
 	public Complex atanh() {                                                               //artanh
 		if(im==0 && Math.abs(re)==1)           { return new Complex(re==1 ? inf : -inf); } //special case: atanh(±1)=±∞
 		if(isInf()) { return new Complex(0,(im>0 || im==0 && re<=1) ? HALFPI : -HALFPI); } //special case: z is infinite, return ±πi/2
@@ -964,22 +1009,31 @@ public class Complex extends Mafs { //this object represents a complex number.
 		return ans;                                                    //return answer
 	}
 	
-	/**arc cos @return the principal value of the arc cosine*/
+	/**Arc cosine
+	 * @return the principal value of the arc cosine*/
 	public Complex acos() {                                                 //acos
 		if(im==0 && Math.abs(re)<=1) { return new Complex(Math.acos(re)); } //real input [-1,1]: return acos
 		return mulI().asinh().muleqI().addeq(HALFPI);                       //else             : return π/2-asin
 	}
-	/**arc sin @return the principal value of the arc sine*/
+	/**Arc sine
+	 * @return the principal value of the arc sine*/
 	public Complex asin() { return mulI().asinh().diveqI(); } //asin
-	/**arc tan @return the principal value of the arc tangent*/
+	/**Arc tangent
+	 * @return the principal value of the arc tangent*/
 	public Complex atan() { return mulI().atanh().diveqI(); } //atan
 	
 	
-	/**arc sec @return the arc    secant*/ public Complex asec() { return inv().acos(); } //asec
-	/**arc csc @return the arc  cosecant*/ public Complex acsc() { return inv().asin(); } //acsc
-	/**arc cot @return the arc cotangent*/ public Complex acot() { return inv().atan(); } //acot
+	/**Arc secant
+	 * @return the arc    secant*/ public Complex asec() { return inv().acos(); } //asec
+	/**Arc cosecant
+	 * @return the arc  cosecant*/ public Complex acsc() { return inv().asin(); } //acsc
+	/**Arc cotangent
+	 * @return the arc cotangent*/ public Complex acot() { return inv().atan(); } //acot
 	
-	/**inverse sech @return the inverse hyperbolic secant*/    public Complex asech() { return inv().acosh(); } //asech
-	/**inverse csch @return the inverse hyperbolic cosecant*/  public Complex acsch() { return inv().asinh(); } //acsch
-	/**inverse coth @return the inverse hyperbolic cotangent*/ public Complex acoth() { return inv().atanh(); } //acoth
+	/**Inverse sech
+	 * @return the inverse hyperbolic secant*/    public Complex asech() { return inv().acosh(); } //asech
+	/**Inverse csch
+	 * @return the inverse hyperbolic cosecant*/  public Complex acsch() { return inv().asinh(); } //acsch
+	/**Inverse coth
+	 * @return the inverse hyperbolic cotangent*/ public Complex acoth() { return inv().atanh(); } //acoth
 }
