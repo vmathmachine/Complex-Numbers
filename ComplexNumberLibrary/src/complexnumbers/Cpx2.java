@@ -3,18 +3,18 @@ package complexnumbers;
 /**
  * An additional class for more complicated, special functions.
  * 
- * <br> Such functions currently include the Gamma function, as well as several related functions such as the factorial and the digamma
+ * <br><br> Such functions currently include the Gamma function, as well as several related functions such as the factorial and the digamma
  * function.
  * 
- * <br> In later versions, I plan on implementing functions related to the error function, the Riemmann Zeta function, the exponential
+ * <br><br> In later versions, I plan on implementing functions related to the error function, the Riemmann Zeta function, the exponential
  * integral, polylogarithms, and elliptic integrals.  All of said functions have been built, but they have yet to be rigorously tested.
  * Also, the Elliptic integral of the third kind is extremely in the beta stages, as while I know how to compute it, I haven't the foggiest
  * idea how to remove any of its branch cuts.
  * 
- * <br> I also have plans to implement the Bessel functions, the incomplete gamma function, the Hurwitz zeta function, the Lambert W function
- * (also known as the product logarithm).  However, none of said functions have been built.
+ * <br><br> I also have plans to implement the Bessel functions, the incomplete gamma function, the Hurwitz zeta function, and the Lambert W
+ * function (also known as the product logarithm).  However, none of said functions have been built.
  * 
- * <br> This class also acts as an extra piece of sample code, showing off the capabilities of the complex number library and why you might want
+ * <br><br> This class also acts as an extra piece of sample code, showing off the capabilities of the complex number library and why you might want
  * to use certain seemingly useless functions and constants.
  * 
  * @author Math Machine
@@ -32,10 +32,10 @@ public class Cpx2 extends Cpx {
 	////////////////////////////////////////////////// GAMMA FUNCTIONS ////////////////////////////////////////////////
 	
 	/**
-	 * The Gamma function: Denoted Γ(z), it's equivalent to (z-1)! for all integer values of z.  It's special because it follows several
+	 * The Gamma function: Denoted Γ(z), equivalent to (z-1)! for all integer values of z.  It's special because it follows several
 	 * identities, such as Γ(z+1) = z*Γ(z) and Γ(z)Γ(1-z) = πcsc(πz), and because it can be used to evaluate a wide multitude of
 	 * definite integrals.  This library calculates the Gamma function using the Lanczos Approximation, a highly efficient approximation
-	 * that combines asymptotic behavior with harmonic sums to give an accurate approximation for IEEE double floating points.  For
+	 * that combines asymptotic behavior with harmonic sums to give an accurate approximation for IEEE 64-bit double floating points.  For
 	 * even better accuracy, when the input is an integer between 1 and 21, the gamma function is evaluated as (z-1)! using
 	 * repeated multiplication.
 	 * 
@@ -68,8 +68,8 @@ public class Cpx2 extends Cpx {
 		}
 		
 		//////// INTEGER INPUTS ////////
-		if(z.isInt() && z.re<22) {                            //if the input is an integer (and it's small enough):
-			return new Complex((double)factorial((int)z.re)); //cast to an integer & compute the traditional factorial
+		if(z.isInt() && z.re<22) {                              //if the input is an integer (and it's small enough):
+			return new Complex((double)factorial((int)z.re-1)); //cast to an integer & compute the traditional factorial
 		}
 		
 		//////// GENERAL CASE /////////
@@ -77,11 +77,11 @@ public class Cpx2 extends Cpx {
 	}
 	
 	/**
-	 * The Lanczos approximation is a highly efficient approximation for Γ(z) for all inputs with a positive real part and which don't overflow.
-	 * The approximation combines the asymptotic relation Γ(z) ~ z^(z-1/2)*e^-z*√(2π) with a harmonic sum of reciprocals to give an estimate
-	 * which works for the IEEE standard double floating points.  The coefficients of the harmonic sum are delicate, as you need to compute a
-	 * different set of coefficients depending on how many sig figs you need.  These particular coefficients were calculated specifically for
-	 * 64 bit floats.
+	 * The Lanczos approximation.  This is a highly efficient approximation for Γ(z) for all inputs with a positive real part and which don't
+	 * overflow.  The approximation combines the asymptotic relation Γ(z) ~ z^(z-1/2)*e^-z*√(2π) with a harmonic sum of reciprocals to give an
+	 * estimate which works for the IEEE standard double floating points.  The coefficients of the harmonic sum are delicate, as you need to
+	 * compute a different set of coefficients depending on how many sig figs you need.  These particular coefficients were calculated
+	 * specifically for 64-bit floats.
 	 * 
 	 * @param z complex input
 	 * @return  the lanczos approximation of Γ(z)
@@ -101,7 +101,7 @@ public class Cpx2 extends Cpx {
 	}
 	
 	/**
-	 * The factorial function, extended to complex number inputs.  The input does not need to be an integer, or even a real number for
+	 * z!. The factorial function, extended to complex number inputs.  The input does not need to be an integer, or even a real number for
 	 * that matter.
 	 * @param z complex input
 	 * @return z!
@@ -110,8 +110,8 @@ public class Cpx2 extends Cpx {
 	
 	
 	/**
-	 * The logarithm of the gamma function, lnΓ(z), computed via the Stirling approximation. (Note, it's not necessarily the principal value)
-	 * Obeys the relation lnΓ(z+1) = lnΓ(z)+ln(z).
+	 * The logarithm of the gamma function, lnΓ(z).  Computed via the Stirling approximation. (Note, it's not necessarily the principal value
+	 * of the logarithm).  Obeys the relation lnΓ(z+1) = lnΓ(z)+ln(z).
 	 * @param z complex input
 	 * @return lnΓ(z)
 	 */
@@ -124,18 +124,18 @@ public class Cpx2 extends Cpx {
 			return logGammaReflector(z).subeq(loggamma(sub(1,z))); //otherwise: return ln(πcsc(πz))-lnΓ(1-z) (w/ a slight parity adjustment)
 		}
 		
-	   	////////////// INTEGER INPUTS //////////////////////
-		if(z.isInt() && z.re<22) {                                        //if the input is an integer (and it's small enough)
-	    		return new Complex(Math.log((double)factorial((int)z.re-1))); //cast to an integer, compute the traditional factorial, return the log
-	    	}
-	    	
-	    	//////////////// GENERAL CASE ///////////////////
-	    	
-	    	Complex eval = stirlingApprox(z.add(5)); //evaluate the Stirling approximation on z+5
-	    	
-	    	eval.subeq(logSum(z, z.add(1), z.add(2), z.add(3), z.add(4))); //subtract the 5 preceding logarithms
-	    	
-	    	return eval; //return the result
+		////////////// INTEGER INPUTS //////////////////////
+	    if(z.isInt() && z.re<22) {                                        //if the input is an integer (and it's small enough)
+	    	return new Complex(Math.log((double)factorial((int)z.re-1))); //cast to an integer, compute the traditional factorial, return the log
+	    }
+	    
+	    //////////////// GENERAL CASE ///////////////////
+	    
+	    Complex eval = stirlingApprox(z.add(5)); //evaluate the Stirling approximation on z+5
+	    
+	    eval.subeq(logSum(z, z.add(1), z.add(2), z.add(3), z.add(4))); //subtract the 5 preceding logarithms
+	    
+	    return eval; //return the result
 	}
 	
 	/**
@@ -145,19 +145,19 @@ public class Cpx2 extends Cpx {
 	 */
 	private static Complex stirlingApprox(Complex z) { //computes the Stirling approximation of lnΓ(z)
 		Complex sum=ln(z).muleq(z.sub(0.5)).subeq(z).addeq(0.5*(log2+logPI)); //initialize something to store our sum to (z-1/2)ln(z)-z+ln(2π)/2
-	    	Complex expo=inv(z);                                                  //this'll store the (-2n+1)th power of z
-	   	Complex iter=sq(expo);                                                //this is what expo will multiply by each time
-	    	
-	    	for(int n=2;n<15;n+=2) {                          //loop through B_2 to B_14 (ignore the 0s)
-	   	 	sum.addeq(mul(expo, Bernoulli[n]/(n*(n-1)))); //add B_(2n)/(n*(2n-1)*z^(2n-1))
-	    		if(n!=14) { expo.muleq(iter); }               //multiply expo by iter each time (except the last time)
-	    	}
-	    	
-		return sum; //return result
+	    Complex expo=inv(z);                                                  //this'll store the (-2n+1)th power of z
+	    Complex iter=sq(expo);                                                //this is what expo will multiply by each time
+	    
+	    for(int n=2;n<15;n+=2) {                          //loop through B_2 to B_14 (ignore the 0s)
+	    	sum.addeq(mul(expo, Bernoulli[n]/(n*(n-1)))); //add B_(2n)/(n*(2n-1)*z^(2n-1))
+	    	if(n!=14) { expo.muleq(iter); }               //multiply expo by iter each time (except the last time)
+	    }
+	    
+	    return sum; //return result
 	}
 	
 	/**
-	 * Equivalent to lnΓ(z)+lnΓ(1-z), which is equal to ln(πcsc(πz)) plus some multiple of 2πi.  It's continuous everywhere, except on
+	 * Equivalent to lnΓ(z)+lnΓ(1-z).  Which is equal to ln(πcsc(πz)) plus some multiple of 2πi.  It's continuous everywhere, except on
 	 * the branch cut where Im(z)==0 and Re(z) isn't between 0 and 1.  I made this function public because, honestly, it can't hurt to use it.
 	 * Especially if you want to try and plot an (almost) continuous variation of ln(sin(πz)) that doesn't overflow.
 	 * @param z complex input
@@ -178,7 +178,7 @@ public class Cpx2 extends Cpx {
 	}
 	
 	/**
-	 * Computes the digamma function of z, denoted ψ(z).  It's equivalent to the harmonic series up to z-1 minus the Mascheroni constant γ.
+	 * Computes the digamma function of z, denoted ψ(z).  It's equivalent to the harmonic series up to z-1, minus the Mascheroni constant γ.
 	 * It's also equal to the derivative of the loggamma function.  Unlike the loggamma function, though, it has no branch cuts or non-pole
 	 * discontinuities.
 	 * @param z complex input
@@ -189,12 +189,12 @@ public class Cpx2 extends Cpx {
 		if(z.re<0.5) { //input is less than 1/2
 			return digamma(sub(1,z)).subeq( div(Math.PI, tan(z.mul(Math.PI))) ); //calculate reflection formula, ψ(z) = ψ(1-z)-πcot(πz)
 		}
-	    	
-	    	Complex eval = digammaApprox(z.add(5)); //evaluate the digamma approximation at z+5
-	    	
-	    	for(int n=0;n<=4;n++) { eval.subeq(z.add(n).inv()); } //subtract the inverses of the 5 preceding numbers
-	    	
-	    	return eval; //return the result
+	    
+	    Complex eval = digammaApprox(z.add(5)); //evaluate the digamma approximation at z+5
+	    
+	    for(int n=0;n<=4;n++) { eval.subeq(z.add(n).inv()); } //subtract the inverses of the 5 preceding numbers
+	    
+	    return eval; //return the result
 	}
 	
 	/**
@@ -205,13 +205,13 @@ public class Cpx2 extends Cpx {
 	 */
 	private static Complex digammaApprox(Complex z) { //an approximation for the digamma function over the right branch of the complex plane
 		Complex sum=ln(z).subeq(z.mul(2).inv()); //initialize something to store our sum to ln(z)-1/(2z)
-	    	Complex expo=sq(inv(z));                 //this'll store the (-2n)th power of z
-	   	Complex iter=expo.copy();                //this is what expo will multiply by each time
+	    Complex expo=sq(inv(z));                 //this'll store the (-2n)th power of z
+	    Complex iter=expo.copy();                //this is what expo will multiply by each time
 		
 		for(int n=2;n<15;n+=2) {                  //loop through B_2 to B_14 (ignore the 0s)
 			sum.subeq(mul(expo, Bernoulli[n]/n)); //subtract B_n/(n*z^n)
 			if(n!=7) { expo.muleq(iter); }        //multiply expo by iter each time (except the last time)
-		}
+	    }
 		
 		return sum; //return the result
 	}
@@ -242,17 +242,17 @@ public class Cpx2 extends Cpx {
 		}
 	    
 		//////////// GENERAL CASE ///////////////////
-	    	Complex eval = polygammaApprox(m, z.add(5)); //evaluate ±ψ(m,z+5)
-	    	
-	    	long fact=factorial(m); //compute m!
-	    	
-	    	for(int n=0;n<=4;n++) { //loop through the 5 preceding numbers
-	    		eval.subeq(div(fact,z.add(n).pow(m+1))); //subtract m!/(z+n)^(m+1)
-	    	}
-	    	
-	    	if((m&1)==1) { eval.negeq(); } //if m is odd, negate
-	    	
-	    	return eval; //return the result
+	    Complex eval = polygammaApprox(m, z.add(5)); //evaluate ±ψ(m,z+5)
+	    
+	    long fact=factorial(m); //compute m!
+	    
+	    for(int n=0;n<=4;n++) { //loop through the 5 preceding numbers
+	    	eval.subeq(div(fact,z.add(n).pow(m+1))); //subtract m!/(z+n)^(m+1)
+	    }
+	    
+	    if((m&1)==1) { eval.negeq(); } //if m is odd, negate
+	    
+	    return eval; //return the result
 	}
 	
 	/**
@@ -319,7 +319,7 @@ public class Cpx2 extends Cpx {
 			reflector.addeq(mul(term,b1[k])); //add the term times the coefficient
 			term.muleq(iter);                 //multiply the term by the iterator
 		}
-		reflector.muleq(Math.pow(2,m>>1)*dPow(Math.PI,m+1));    //multiply the reflector by 2^floor(m/2) times π^(m+1)
+		reflector.muleq(Math.pow(2,m>>1)*pow(Math.PI,m+1));     //multiply the reflector by 2^floor(m/2) times π^(m+1)
 		if((m&1)==0) { reflector.diveq(tan(mul(z,-Math.PI))); } //if m is even, we'll multiply that by -cot(πz)
 		
 		return reflector; //return the reflector
