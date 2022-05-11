@@ -23,7 +23,7 @@ public class ComplexNumbers {
 	
 	/**
 	 * Returns the version of the Library.
-	 * @return Library as a string
+	 * @return Library version as a string
 	 */
 	public static String version() {
 		return VERSION;
