@@ -18,8 +18,8 @@ Some of you probably already know this....I didn't.  So, I'm putting this down f
 
 1. Make sure you have Processing downloaded on your system.
 2. Press the green dropdown "Code" button at the top of the Github page.  Press "Download ZIP".
-3. Once the ZIP is downloaded (presumably, it's in your Downloads folder.  If not, you'll have to look through your browser's settings to see where it sends downloads).  Now, you have to unzip the file.  For Windows, you do that by right clicking and pressing "extract all".  For Linux, you do that by right clicking and pressing "extract here".  For Mac, you do that by double clicking the .zip file.
-4. Enter the UNCOMPRESSED folder (the one that DOESN'T end in the .zip extension) named "Complex-Numbers-master".
+3. The ZIP file should now be downloaded (presumably, it's in your Downloads folder.  If not, you'll have to look through your browser's settings to see where it sends downloads).  Now, you have to unzip the file.  For Windows, you do that by right clicking and pressing "extract all".  For Linux, you do that by right clicking and pressing "extract here".  For Mac, you do that by double clicking the .zip file.
+4. Enter the UNCOMPRESSED folder (the one that DOESN'T end in the .zip extension) named "Complex-Numbers-master".  If you're downloading another version, it'll say "Complex-Numbers-" followed by that version.
 5. Right click the Folder labeled "ComplexNumberLibrary", hit "copy".  (On Windows, you might have to first enter another, nested folder also named "Complex-Numbers-master" before completing this step).
 6. If you have Processing open, close it.
 7. Go to your Processing sketchbook folder (the folder containing all of your current processing sketches).  Go to the libraries folder.
