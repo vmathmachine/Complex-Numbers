@@ -945,9 +945,16 @@ public class Complex extends Mafs { //this object represents a complex number.
 		if(re==0)    { return new Complex(0,Math.tanh(im));  } //imag input: return tan*i
 		if(Math.abs(im)>20) { return new Complex(0,sgn(im)); } //large input: return +-1
 		
-		double[] sinhcosh=fsinhcosh(2*im);                     //compute sinh & cosh of twice the imag part
-		double denom = 1.0D/(cos(2*re)+sinhcosh[1]);           //compute 1/(cos(2x)+cosh(2y))
-		return new Complex(sin(2*re)*denom, sinhcosh[0]*denom); //tan(x+yi) = (sin(2x)+sinh(2y)i)/(cos(2x)+cosh(2y))
+		double sin=sin(2*re), cos=cos(2*re); //compute sin  & cos  of twice the real part
+		double[] sinhcosh=fsinhcosh(2*im);   //compute sinh & cosh of twice the imag part
+		
+		if(cos<-0.9998D && sinhcosh[1]<1.0002D) { //SPECIAL CASE: our input is close to an odd multiple of π/2
+			double denom = 1.0D/(sinhcosh[1]-cos);                   //compute 1/(cosh(2y)-cos(2x))
+			return new Complex(sin*denom, -sinhcosh[0]*denom).inv(); //cot(x+yi) = (sin(2x)-sinh(2y)i)/(cosh(2y)-cos(2x)), tan = 1/cot
+		}
+		//DEFAULT CASE: use the following formula on our input
+		double denom = 1.0D/(cos+sinhcosh[1]);            //compute 1/(cos(2x)+cosh(2y))
+		return new Complex(sin*denom, sinhcosh[0]*denom); //tan(x+yi) = (sin(2x)+sinh(2y)i)/(cos(2x)+cosh(2y))
 	}
 	
 	/** Hyperbolic cosine
