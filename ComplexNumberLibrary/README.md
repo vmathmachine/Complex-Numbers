@@ -5,7 +5,7 @@ It was built specifically for Processing.js.
 The source code is heavily commented, and if you wanna look at it yourself, by all means! :)
 If you see something that doesn't quite make sense, you might be able to find more information on the wiki I wrote.
 
-This library has been tested and proven functional on Windows 10 and on Ubuntu 20.04/Mint 20.x.  I see no reason why it shouldn't run on other versions of Windows and Linux, or on Mac OS, but I cannot guarantee it will.
+This library has been tested and proven functional on Windows 10, on Ubuntu 20.04/Mint 20.x, and on ArchLinux 21.2.  I see no reason why it shouldn't run on other versions of Windows and Linux, or on Mac OS, but I cannot guarantee it will.
 
 It has been tested and proven functional on Processing 3.5.4 and on Processing 4.0 Beta 8.
 
@@ -53,17 +53,17 @@ My email is mathmachine4@gmail.com.  If you experience any issues with this libr
 # Example Code:
 
 ```
-Complex A=new Complex(2,1);  //declares A as the number 2+i
-Complex B=new Complex(-1,1); //declares B as the number -1+i
+Complex a=new Complex(2,1);  //declares a as the number 2+i
+Complex b=new Complex(-1,1); //declares b as the number -1+i
 
-Complex C=A.sq();  //declares C as the square of 2+i (which is 3+4i)
-println(C.add(B)); //prints out their sum, which is 2+5i
-println(B, C);     //the add function did not alter B or C, so it should print out "-1+i 3+4i"
-println(C.addeq(B)); //once again prints out their sum, which is 2+5i
-println(B, C);     //the addeq function DID alter C, but not B, so it should print out "-1+i 2+5i"
+Complex c=a.sq();  //declares c as the square of 2+i (which is 3+4i)
+println(c.add(b)); //prints out their sum, which is 2+5i
+println(b, c);     //the add function did not alter b or c, so it should print out "-1+i 3+4i"
+println(c.addeq(b)); //once again prints out their sum, which is 2+5i
+println(b, c);     //the addeq function DID alter c, but not b, so it should print out "-1+i 2+5i"
 ```
 
 ```
-Complex A=Cpx.iTimes(Math.PI); //declares A as the number πi (note that this is slightly shorter than saying new Complex(0,Math.PI))
-println(A.exp().add(1));       //due to Euler's identity, e^(πi)+1=0.  So, if you're running the latest version, it should say 0.
+Complex a=Cpx.iTimes(Math.PI); //declares a as the number πi (note that this is slightly shorter than saying new Complex(0,Math.PI))
+println(a.exp().add(1));       //due to Euler's identity, e^(πi)+1=0.  So, if you're running the latest version, it should say 0.
 ```
