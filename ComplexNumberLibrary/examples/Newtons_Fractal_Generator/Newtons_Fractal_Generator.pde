@@ -217,7 +217,7 @@ Complex harmonic(Complex x) { //computes a harmonic sum, using an optimized meth
 
 int closestRoot(Complex c) { //computes the closest root to the input c (returns the index of that root)
   int root = -1;             //the index of the root
-  double minDist = Mafs.inf; //the smallest (square) distance
+  double minDist = Mafs.INF; //the smallest (square) distance
   for(int n=0;n<roots.size();n++) { //loop through all roots (using numbers instead of iterators, because for some reason that ended up being faster)
     double absq = c.sub(roots.get(n)).absq(); //compute the square distance from this root
     if(absq<minDist) {                        //if it's less than our current record
