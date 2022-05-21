@@ -5,30 +5,28 @@ package complexnumbers;
  * This class is used to hold certain mathematical constants, operations, and functions that will be useful for the <code>Complex</code> class.
  * 
  * @author Math Machine
- * @version 1.0.0
+ * @version 1.0.1
  */
 
 public class Mafs {
 	/////////////////// CONSTANTS ///////////////////
 	
 	/** Positive infinity */
-	public static double inf=1.0D/0;
-	/** Euler's Number.  2.71828... */
-	public static double e=2.71828182845904524D;
+	final public static double INF=1.0D/0;
 	/** π/2 */
-	public static double HALFPI=1.57079632679489662D;
+	final public static double HALFPI=1.57079632679489662D;
 	/** √(2) */
-	public static double ROOT2=1.41421356237309505D;
+	final public static double ROOT2=1.41421356237309505D;
 	/** √(π)/2.  Will be used in calculation of the <code>erf</code> function */
-	public static double ROOTPI2=0.886226925452758D;
+	final public static double ROOTPI2=0.886226925452758D;
 	/** ln(2) */
-	public static double log2=0.6931471805599453D;
+	final public static double LOG2=0.6931471805599453D;
 	/** ln(π) */
-	public static double logPI=1.1447298858494001D;
-	/** The Euler-Mascheroni constant.
-	 *  It's just called Mascheroni because calling it Euler might cause people to confuse it for Euler's number.
+	final public static double LOGPI=1.1447298858494001D;
+	/** The Euler-Mascheroni constant, commonly represented by the Greek letter γ (gamma).  Not to be confused with the
+	 *  Cpx2 method, gamma, which returns the gamma function.
 	 */
-	public static double Mascheroni=0.57721566490153286D;
+	final public static double GAMMA=0.57721566490153286D;
 	
 	/////////////////// STRING BASED STUFF ///////////////////
 	
@@ -219,7 +217,7 @@ public class Mafs {
 	public static double tan(double d) { //computes the tangent without roundoff errors
 		double mod = d%Math.PI;
 		if(mod==0)                { return 0;   } //if a multiple of π, return 0
-		if(Math.abs(mod)==HALFPI) { return inf; } //if an odd multiple of π/2, return ∞
+		if(Math.abs(mod)==HALFPI) { return INF; } //if an odd multiple of π/2, return ∞
 		return Math.tan(d);                       //return tangent
 	}
 	
@@ -233,7 +231,7 @@ public class Mafs {
 	 */
 	public static double[] fsinhcosh(double d) { //returns the cosh & sinh, computed simultaneously
 		if(Math.abs(d)<1E-4D) { double sq = d*d; return new double[] {d+d*sq/6, 1+0.5*sq+sq*sq/24}; }                   //small input: return Taylor's series
-		if(Math.abs(d)>20)    { double exp = Math.exp(Math.abs(d)-log2); return new double[] {d>0 ? exp : -exp, exp}; } //large input: return +-e^(|x|-ln(2))
+		if(Math.abs(d)>20)    { double exp = Math.exp(Math.abs(d)-LOG2); return new double[] {d>0 ? exp : -exp, exp}; } //large input: return +-e^(|x|-ln(2))
 		
 		double part = Math.exp(d); //regular input: compute e^d
 		double inv  = 1.0D/part;   //and e^-d

@@ -19,7 +19,7 @@ public class ComplexNumbers {
 	/**
 	 * The current version of the Library.
 	 */
-	public final static String VERSION = "##library.prettyVersion##";
+	public final static String VERSION = "1.0.1";
 	
 	/**
 	 * Returns the version of the Library.
@@ -29,3 +29,4 @@ public class ComplexNumbers {
 		return VERSION;
 	}
 }
+

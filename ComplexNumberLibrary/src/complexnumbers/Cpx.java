@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * A collection of utilities for complex numbers that can't be called as <code>Complex</code> instance methods.
  * 
  * @author Math Machine
- * @version 1.0.0
+ * @version 1.0.1
  */
 
 public class Cpx extends Mafs {
@@ -494,8 +494,8 @@ public class Cpx extends Mafs {
 	public static Complex gd(Complex z) { //Gudermannian function
 		//first, the special cases. If the input is too close to one of the poles, we have to use an approximation
 		Complex z2 = z.mod_v2(iTimes(2*Math.PI)); //take a modulo with 2πi
-		if(z2.subI(HALFPI).lazyabs()<1E-4) { return ln(z.mulI().addeq(HALFPI)).diveqI().addeqI(log2); } //approximation with logarithm
-		if(z2.addI(HALFPI).lazyabs()<1E-4) { return ln(z.divI().addeq(HALFPI)).muleqI().subeqI(log2); } //approximation with logarithm
+		if(z2.subI(HALFPI).lazyabs()<1E-4) { return ln(z.mulI().addeq(HALFPI)).diveqI().addeqI(LOG2); } //approximation with logarithm
+		if(z2.addI(HALFPI).lazyabs()<1E-4) { return ln(z.divI().addeq(HALFPI)).muleqI().subeqI(LOG2); } //approximation with logarithm
 		
 		double[] sinhcosh = fsinhcosh(z.re);     //compute the cosh & sinh of the real part
 		double cos = cos(z.im), sin = sin(z.im); //compute the cos & sin of the imaginary part

@@ -20,7 +20,7 @@ package complexnumbers;
  * <br><br>It should be noted that, due to the way this was implemented, Infinite numbers and NaN numbers are practically interchangeable.
  * 
  * @author Math Machine
- * @version 1.0.0
+ * @version 1.0.1
  */
 
 public class Complex extends Mafs { //this object represents a complex number.
@@ -204,8 +204,8 @@ public class Complex extends Mafs { //this object represents a complex number.
 	 */
 	public Complex validate() { //validate: removes an undesirable (though not illegal) state
 		if(re==re && im==im) { return this; } //if not NaN, leave
-		if     (Math.abs(re)==inf) { im=0; }  //if re is infinite & im is NaN, make im=0
-		else if(Math.abs(im)==inf) { re=0; }  //if im is infinite & re is NaN, make re=0
+		if     (Math.abs(re)==INF) { im=0; }  //if re is infinite & im is NaN, make im=0
+		else if(Math.abs(im)==INF) { re=0; }  //if im is infinite & re is NaN, make re=0
 		return this;                          //return
 	}
 	
@@ -255,7 +255,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 	public String toString(int dig) {                             //Complex -> String (with a specific number of digits)
 		
 		if(isInf()) {                                             //special case: infinite input
-			if(Math.abs(im)==inf) { return "Complex Overflow";  } //  Complex Overflow
+			if(Math.abs(im)==INF) { return "Complex Overflow";  } //  Complex Overflow
 			else if(re<0)         { return "Negative Overflow"; } // Negative Overflow
 			else                  { return "Overflow";          } //[regular] Overflow
 		}
@@ -678,7 +678,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 	public double abs()  {                       //absolute value
 		if(im==0) { return Math.abs(re); } //if it's real, return abs(Re(x))
 		if(re==0) { return Math.abs(im); } //if it's imaginary, return abs(Im(x))
-		if(isInf()) { return inf; }
+		if(isInf()) { return INF; }
 		
 		double L=lazyabs();                    //take lazy abs for a quick sense of scale
 		if(L<=1.055E-154D || L>=9.481E+153D) { //absolute square overflows/underflows:
@@ -751,10 +751,10 @@ public class Complex extends Mafs { //this object represents a complex number.
 		
 		if(equals(0)) { return new Complex(); } //special case: √(0)=0
 		if(isInf()) {                                                             		                 //special case: infinite input
-			if(Math.abs(im)!=inf) { return re==inf ? new Complex(inf) : new Complex(0,im>=0?inf:-inf); } //non-inf imag part: return either ∞ or ±∞i
-			return new Complex(inf,im);                                           		                 //otherwise, reutrn ∞±∞i
+			if(Math.abs(im)!=INF) { return re==INF ? new Complex(INF) : new Complex(0,im>=0?INF:-INF); } //non-inf imag part: return either ∞ or ±∞i
+			return new Complex(INF,im);                                           		                 //otherwise, reutrn ∞±∞i
 		}
-		if(2*Math.abs(re)+Math.abs(im)==inf) { return mul(0.25D).sqrt().muleq(2D); } //special case: |z|+|x|=Overflow, return √(z/4)*2
+		if(2*Math.abs(re)+Math.abs(im)==INF) { return mul(0.25D).sqrt().muleq(2D); } //special case: |z|+|x|=Overflow, return √(z/4)*2
 		
 		//the formula for √(z) = √((|z|+x)/2) + sgn(y)√((|z|-x)/2)i    (where z = x + yi)
 		//since √((|z|+x)/2) * sgn(y)√((|z|-x)/2) = y/2, we'll just find one sqrt & use division to find the other
@@ -774,8 +774,8 @@ public class Complex extends Mafs { //this object represents a complex number.
 	public Complex cbrt() { //cube root of complex z
 		if(im==0 && (cbrt_Option||re>=0)) { return new Complex(Math.cbrt(re)); } //z is real: return cbrt(re(z)) (we may or may not exclude negatives)
 		
-		if(re==-inf)             { return new Complex(inf,im>=0?inf:-inf);         } //special case : -∞+something*i
-		if(isInf())              { return new Complex(inf,Math.abs(im)==inf?im:0); } //special case : something else infinite
+		if(re==-INF)             { return new Complex(INF,im>=0?INF:-INF);         } //special case : -∞+something*i
+		if(isInf())              { return new Complex(INF,Math.abs(im)==INF?im:0); } //special case : something else infinite
 		if(lazyabs()>1.271E308D) { return mul(0.125D).cbrt().muleq(2D);            } //|z| overflows: return 2cbrt(z/8)
 		
 		double ang = arg()/3;                           //compute arg(z)/3
@@ -790,7 +790,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 	public Complex exp() { //e^z
 		if(im==0) { return new Complex(Math.exp(re));                  }   //real number : return e^(real part)
 		if(re==0) { return new Complex(cos(im),sin(im));               }   //imag number : return cos(imag)+sin(imag)*i
-		if(re>709.78 && re<710.13) { return sub(log2).exp().muleq(2D); }   //large real part: subtract ln(2), take exponent, multiply by 2
+		if(re>709.78 && re<710.13) { return sub(LOG2).exp().muleq(2D); }   //large real part: subtract ln(2), take exponent, multiply by 2
 		
 		double exp = Math.exp(re);                   //compute exp of real part
 		return new Complex(exp*cos(im),exp*sin(im)); //return e^(real)*(cos(imag)+sin(imag)*i)
@@ -804,7 +804,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 	 */
 	public Complex log() { //log(z)
 		if(re==0||im==0) { return new Complex(Math.log(abs()), arg()); } //real/imaginary number: return ln|z|+arg(z)i
-		if(isInf())      { return new Complex(inf, arg());             } //infinite number: return ∞+arg(z)i
+		if(isInf())      { return new Complex(INF, arg());             } //infinite number: return ∞+arg(z)i
 		
 		double L=lazyabs();                         //take lazy abs for a quick sense of scale
 		if(L<=1.055E-154D || L>=9.481E+153D) {      //absolute square overflows/underflows:
@@ -877,9 +877,9 @@ public class Complex extends Mafs { //this object represents a complex number.
 	 * @return the result
 	 */
 	public Complex pow(Complex a) {              //complex z ^ complex a
-		if(equals(e)) { return a.exp();   } //z==e        : return e^a
-		if(a.im==0)   { return pow(a.re); } //a is real   : return complex z ^ double a.re
-		return log().muleq(a).exp();        //general case: return e to the power of the log times a
+		if(equals(Math.E)) { return a.exp();   } //z==e        : return e^a
+		if(a.im==0)        { return pow(a.re); } //a is real   : return complex z ^ double a.re
+		return log().muleq(a).exp();             //general case: return e to the power of the log times a
 	}
 	
 //////////////////// ROUNDING & MODULOS ////////////////////////////////////
@@ -988,7 +988,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 	public Complex acosh() {                                                //arcosh
 		if(im==0&&Math.abs(re)<=1) { return new Complex(0,Math.acos(re)); } //real input [-1,1]: return acos*i
 		
-		if(absq()>1E18D) { return log().addeq(log2); }            //huge input: return asymptotic approximation
+		if(absq()>1E18D) { return log().addeq(LOG2); }            //huge input: return asymptotic approximation
 		
 		return add( sq().subeq(1).sqrt().muleqcsgn(this) ).log(); //else: return ln(z+csgn(z)√(z²-1))
 	}
@@ -997,7 +997,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 	public Complex asinh() {                                                //arsinh
 		if(re==0&&Math.abs(im)<=1) { return new Complex(0,Math.asin(im)); } //imag input [-i,i]: return asin*i
 		
-		if(absq()>1E18D) { return abs2().log().addeq(log2).muleqcsgn(this); } //huge input: return asymptotic approximation
+		if(absq()>1E18D) { return abs2().log().addeq(LOG2).muleqcsgn(this); } //huge input: return asymptotic approximation
 		if(lazyabs()<=1E-4D) { return mul(Cpx.sub(1,sq().div(6))); }          //tiny input: return taylor's series
 		
 		return (abs2().addeq( sq().addeq(1).sqrt() )).log().muleqcsgn(this);  //else: return csgn(z)ln(|z|+√(z²+1))
@@ -1005,7 +1005,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 	/** Inverse tanh
 	 * @return inverse hyperbolic tangent*/
 	public Complex atanh() {                                                               //artanh
-		if(im==0 && Math.abs(re)==1)           { return new Complex(re==1 ? inf : -inf); } //special case: atanh(±1)=±∞
+		if(im==0 && Math.abs(re)==1)           { return new Complex(re==1 ? INF : -INF); } //special case: atanh(±1)=±∞
 		if(isInf()) { return new Complex(0,(im>0 || im==0 && re<=1) ? HALFPI : -HALFPI); } //special case: z is infinite, return ±πi/2
 		
 		if(re==0)            { return new Complex(0,Math.atan(im)); } //imag input: return atan*i

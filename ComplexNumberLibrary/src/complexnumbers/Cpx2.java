@@ -18,7 +18,7 @@ package complexnumbers;
  * to use certain seemingly useless functions and constants.
  * 
  * @author Math Machine
- * @version 1.0.0
+ * @version 1.0.1
  */
 public class Cpx2 extends Cpx {
 	
@@ -32,12 +32,12 @@ public class Cpx2 extends Cpx {
 	////////////////////////////////////////////////// GAMMA FUNCTIONS ////////////////////////////////////////////////
 	
 	/**
-	 * The Gamma function: Denoted Γ(z), equivalent to (z-1)! for all integer values of z.  It's special because it follows several
-	 * identities, such as Γ(z+1) = z*Γ(z) and Γ(z)Γ(1-z) = πcsc(πz), and because it can be used to evaluate a wide multitude of
-	 * definite integrals.  This library calculates the Gamma function using the Lanczos Approximation, a highly efficient approximation
-	 * that combines asymptotic behavior with harmonic sums to give an accurate approximation for IEEE 64-bit double floating points.  For
-	 * even better accuracy, when the input is an integer between 1 and 21, the gamma function is evaluated as (z-1)! using
-	 * repeated multiplication.
+	 * The Gamma function: Denoted Γ(z), equivalent to (z-1)! for all integer values of z.  Not to be confused with the Euler-Mascheroni
+	 * constant, GAMMA.  This function is special because it follows several identities, such as Γ(z+1) = z*Γ(z) and Γ(z)Γ(1-z) = πcsc(πz),
+	 * and because it can be used to evaluate a wide multitude of definite integrals.  This library calculates the Gamma function using the
+	 * Lanczos Approximation, a highly efficient approximation that combines asymptotic behavior with harmonic sums to give an accurate
+	 * approximation for IEEE 64-bit double floating points.  For even better accuracy, when the input is an integer between 1 and 21, the
+	 * gamma function is evaluated as (z-1)! using repeated multiplication.
 	 * 
 	 * @param z complex input
 	 * @return Γ(z)
@@ -47,12 +47,12 @@ public class Cpx2 extends Cpx {
 		///////// INPUTS IN THE LEFT BRANCH ////////
 		
 		if(z.re<0.5) { // input is less than 1/2
-			if(z.isInt()) { return new Complex((z.re%2==0) ? inf:-inf); }     //integer inputs: return ±∞
+			if(z.isInt()) { return new Complex((z.re%2==0) ? INF:-INF); }     //integer inputs: return ±∞
 			return div(Math.PI, z.mul(Math.PI).sin().muleq(gamma(sub(1,z)))); //otherwise: return πcsc(πz)/Γ(1-z)
 		}
 		
 		//////// OVERFLOWING INPUTS /////////
-		if(z.re>171.6243769563027) { return new Complex(inf); } //if the input is too large, return an overflow (∞)
+		if(z.re>171.6243769563027) { return new Complex(INF); } //if the input is too large, return an overflow (∞)
 		
 		//////// LARGE INPUTS THAT DON'T OVERFLOW /////////
 		if(z.re>142) { //once the input exceeds ~142, the Lanczos approximation will yield an overflow, even though the output isn't an overflow
@@ -120,7 +120,7 @@ public class Cpx2 extends Cpx {
 		////////////// INPUTS IN THE LEFT BRANCH //////////////
 		
 		if(z.re<0.5) { // input is less than 1/2
-			if(z.isInt()) { return new Complex(-inf); }            //integer input: return -∞
+			if(z.isInt()) { return new Complex(-INF); }            //integer input: return -∞
 			return logGammaReflector(z).subeq(loggamma(sub(1,z))); //otherwise: return ln(πcsc(πz))-lnΓ(1-z) (w/ a slight parity adjustment)
 		}
 		
@@ -131,9 +131,9 @@ public class Cpx2 extends Cpx {
 	    
 	    //////////////// GENERAL CASE ///////////////////
 	    
-	    Complex eval = stirlingApprox(z.add(5)); //evaluate the Stirling approximation on z+5
+	    Complex eval = stirlingApprox(z.add(6)); //evaluate the Stirling approximation on z+6
 	    
-	    eval.subeq(logSum(z, z.add(1), z.add(2), z.add(3), z.add(4))); //subtract the 5 preceding logarithms
+	    eval.subeq(logSum(z, z.add(1), z.add(2), z.add(3), z.add(4), z.add(5))); //subtract the 6 preceding logarithms
 	    
 	    return eval; //return the result
 	}
@@ -144,7 +144,7 @@ public class Cpx2 extends Cpx {
 	 * @return result
 	 */
 	private static Complex stirlingApprox(Complex z) { //computes the Stirling approximation of lnΓ(z)
-		Complex sum=ln(z).muleq(z.sub(0.5)).subeq(z).addeq(0.5*(log2+logPI)); //initialize something to store our sum to (z-1/2)ln(z)-z+ln(2π)/2
+		Complex sum=ln(z).muleq(z.sub(0.5)).subeq(z).addeq(0.5*(LOG2+LOGPI)); //initialize something to store our sum to (z-1/2)ln(z)-z+ln(2π)/2
 	    Complex expo=inv(z);                                                  //this'll store the (-2n+1)th power of z
 	    Complex iter=sq(expo);                                                //this is what expo will multiply by each time
 	    
@@ -167,13 +167,13 @@ public class Cpx2 extends Cpx {
 		Complex sin = sin(z.mul(Math.PI)); //compute the sine
 		
 		if(!sin.isInf()) { //if it doesn't overflow
-			Complex res = sub(logPI, sin.abs2().log()); //find ln(π)-ln|sin(πz)| (abs2)
+			Complex res = sub(LOGPI, sin.abs2().log()); //find ln(π)-ln|sin(πz)| (abs2)
 			res.im += HALFPI*(z.divI().csgn())*(Math.floor(z.re)+Math.ceil(z.re)-1); //perform an adjustment to keep it continuous
 			if(z.re==(int)z.re) { res.im+=HALFPI; }                              //perform another adjustment for when the real part is an integer
 			return res;                                                          //return result
 		}
 		else { //if it does overflow
-			return z.sub(0.5).muleqI(Math.PI*csgn(z.im)).addeq(log2+logPI); //return approximation πisgn(im)(z-1/2) + ln(2π)
+			return z.sub(0.5).muleqI(Math.PI*csgn(z.im)).addeq(LOG2+LOGPI); //return approximation πisgn(im)(z-1/2) + ln(2π)
 		}
 	}
 	
@@ -190,9 +190,9 @@ public class Cpx2 extends Cpx {
 			return digamma(sub(1,z)).subeq( div(Math.PI, tan(z.mul(Math.PI))) ); //calculate reflection formula, ψ(z) = ψ(1-z)-πcot(πz)
 		}
 	    
-	    Complex eval = digammaApprox(z.add(5)); //evaluate the digamma approximation at z+5
+	    Complex eval = digammaApprox(z.add(6)); //evaluate the digamma approximation at z+6
 	    
-	    for(int n=0;n<=4;n++) { eval.subeq(z.add(n).inv()); } //subtract the inverses of the 5 preceding numbers
+	    for(int n=0;n<=5;n++) { eval.subeq(z.add(n).inv()); } //subtract the inverses of the 6 preceding numbers
 	    
 	    return eval; //return the result
 	}
@@ -242,11 +242,11 @@ public class Cpx2 extends Cpx {
 		}
 	    
 		//////////// GENERAL CASE ///////////////////
-	    Complex eval = polygammaApprox(m, z.add(5)); //evaluate ±ψ(m,z+5)
+	    Complex eval = polygammaApprox(m, z.add(6)); //evaluate ±ψ(m,z+6)
 	    
 	    long fact=factorial(m); //compute m!
 	    
-	    for(int n=0;n<=4;n++) { //loop through the 5 preceding numbers
+	    for(int n=0;n<=5;n++) { //loop through the 6 preceding numbers
 	    	eval.subeq(div(fact,z.add(n).pow(m+1))); //subtract m!/(z+n)^(m+1)
 	    }
 	    
