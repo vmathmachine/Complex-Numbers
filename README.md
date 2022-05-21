@@ -11,7 +11,7 @@ It has been tested and proven functional on Processing 3.5.4 and on Processing 4
 
 This library does not depend on any other libraries, excluding of course the built-in java packages (such as java.lang and java.util).
 
-The most recent version of this library is 1.0.0.
+The most recent version of this library is 1.0.1.
 
 # How to Download
 Some of you probably already know this....I didn't.  So, I'm putting this down for those of you who also struggle with Github.  Also, just cuz the README file is supposed to tell you how to use the code...and if you can't download it, you can't use it.
