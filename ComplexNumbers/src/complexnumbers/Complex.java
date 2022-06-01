@@ -20,7 +20,7 @@ package complexnumbers;
  * <br><br>It should be noted that, due to the way this was implemented, Infinite numbers and NaN numbers are practically interchangeable.
  * 
  * @author Math Machine
- * @version 1.0.1
+ * @version 1.0.2
  */
 
 public class Complex extends Mafs { //this object represents a complex number.
