@@ -5,7 +5,7 @@ package complexnumbers;
  * This class is used to hold certain mathematical constants, operations, and functions that will be useful for the <code>Complex</code> class.
  * 
  * @author Math Machine
- * @version 1.0.1
+ * @version 1.0.2
  */
 
 public class Mafs {
