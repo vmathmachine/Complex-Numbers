@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * A collection of utilities for complex numbers that can't be called as <code>Complex</code> instance methods.
  * 
  * @author Math Machine
- * @version 1.0.1
+ * @version 1.0.2
  */
 
 public class Cpx extends Mafs {
