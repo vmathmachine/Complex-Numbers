@@ -18,7 +18,7 @@ package complexnumbers;
  * to use certain seemingly useless functions and constants.
  * 
  * @author Math Machine
- * @version 1.0.1
+ * @version 1.0.2
  */
 public class Cpx2 extends Cpx {
 	
