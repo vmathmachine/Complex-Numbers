@@ -45,7 +45,7 @@ call "sin(number)" or "exp(number)" without having to prefix it with a class nam
 Cpx, the Cpx class still has a short name, so it's not too much of a hassle to use it as a prefix.
 
 
-My email is mathmachine4@gmail.com.  If you experience any issues with this library, feel free to contact me at that email.  Just make sure to use a descriptive subject line so I know it's not spam.  Also, be patient with me.  That's not my main email address, so I don't use it too frequently.
+My email is chrismaguschak@gmail.com. If you experience any issues with this library, feel free to contact me at that email. Just make sure to use a descriptive subject line so I know it's not spam.
 
 
 # Example Code:
