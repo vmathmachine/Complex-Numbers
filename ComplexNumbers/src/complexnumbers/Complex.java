@@ -20,7 +20,7 @@ package complexnumbers;
  * <br><br>It should be noted that, due to the way this was implemented, Infinite numbers and NaN numbers are practically interchangeable.
  * 
  * @author Math Machine
- * @version 1.0.2
+ * @version 1.1.0
  */
 
 public class Complex extends Mafs { //this object represents a complex number.
@@ -47,12 +47,12 @@ public class Complex extends Mafs { //this object represents a complex number.
 	 * @param x real part
 	 * @param y imaginary part
 	 */
-	public Complex(double x, double y) { re=x; im=y; }
+	public Complex(final double x, final double y) { re=x; im=y; }
 	/**
 	 * Constructs x+0i.
 	 * @param x real part
 	 */
-	public Complex(double x) { re=x; im=0; }
+	public Complex(final double x) { re=x; im=0; }
 	
 	/**
 	 * Pseudo-constructor with a check.  Constructs x+yi, before performing a check to avoid
@@ -62,7 +62,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 	 * @param y the imaginary part
 	 * @return the constructed object
 	 */
-	public Complex compCheck(double x, double y) { return new Complex(x,y).validate(); }
+	public Complex compCheck(final double x, final double y) { return new Complex(x,y).validate(); }
 	
 ////////////////////////////////////////////// BASIC FUNCTIONS /////////////////////////////////
 	
@@ -170,7 +170,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 	 * @return true if they equal*/
 	@Override
 	public boolean equals(Object o) { //test for equality with another object
-		if(o.getClass()==Complex.class) { return equals((Complex)o); }
+		if(o instanceof Complex) { return equals((Complex)o); }
 		return false;
 	}
 	
@@ -183,7 +183,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 		
 		long x=Double.doubleToLongBits(re), y=Double.doubleToLongBits(im); //get the bits from the real & imaginary parts
 		int result = 1;
-		result = 31*result + (int)(x>>32); //compute the hashcode from 4 ints.  2 from splitting up the re, 2 from splitting up the im.
+		result = 31*result + (int)(x>>32); //compute the hashcode from 4 ints. 2 from splitting up the re, 2 from splitting up the im.
 		result = 31*result + (int)x;
 		result = 31*result + (int)(y>>32);
 		result = 31*result + (int)y;
@@ -255,9 +255,9 @@ public class Complex extends Mafs { //this object represents a complex number.
 	public String toString(int dig) {                             //Complex -> String (with a specific number of digits)
 		
 		if(isInf()) {                                             //special case: infinite input
-			if(Math.abs(im)==INF) { return "Complex Overflow";  } //  Complex Overflow
-			else if(re<0)         { return "Negative Overflow"; } // Negative Overflow
-			else                  { return "Overflow";          } //[regular] Overflow
+			if(Double.isInfinite(im)) { return "Complex Overflow";  } //  Complex Overflow
+			else if(re<0)             { return "Negative Overflow"; } // Negative Overflow
+			else                      { return "Overflow";          } //[regular] Overflow
 		}
 		if(isNaN()) { return "NaN"; }                             //special case: NaN, return NaN
 		
@@ -381,6 +381,22 @@ public class Complex extends Mafs { //this object represents a complex number.
 		double cos = cos(ang), sin = sin(ang); set(re*cos-im*sin,re*sin+im*cos); return this;
 	}
 	
+	/**
+	 * The minimum of the ulps (unit in the last place) of the real and imaginary part
+	 * @return min(ulp(re),ulp(im))
+	 */
+	public double ulpMin() {
+		return Math.min(Math.ulp(re),Math.ulp(im));
+	}
+	
+	/**
+	 * The maximum of the ulps (unit in the last place) of the real and imaginary part
+	 * @return max(ulp(re),ulp(im))
+	 */
+	public double ulpMax() {
+		return Math.max(Math.ulp(re),Math.ulp(im));
+	}
+	
 ///////////////////////////////////////////// BASIC ARITHMETIC /////////////////////////////////////////////////
 	
 	//create a new instance
@@ -468,7 +484,10 @@ public class Complex extends Mafs { //this object represents a complex number.
 	 * @param a the complex number we divide by (known as the divisor)
 	 * @return the quotient
 	 */
-	public Complex div(Complex a) { return mul(a.inv()); }
+	public Complex div(Complex a) {
+		if(a.lazyabs()<Double.MIN_NORMAL) { return scalb(512).mul(a.scalb(512).inv()); } //a is subnormal: multiply dividend & divisor by 2^512
+		return mul(a.inv());
+	}
 	/**
 	 * Divides x+yi
 	 * @param x divisor's real part
@@ -482,8 +501,8 @@ public class Complex extends Mafs { //this object represents a complex number.
 	 * @return quotient
 	 */
 	public Complex div(double a) {
-		if(Math.abs(a)<=5.562684646268E-309D) { return new Complex(re/a, im/a); } //for small a, we divide each component by a
-		double rec=1.0D/a; return new Complex(re*rec, im*rec);                    //else, multiply each component by 1/a
+		if(Math.abs(a)<Double.MIN_NORMAL) { return new Complex(re/a, im/a); } //for subnormal a, we divide each component by a
+		double rec=1.0D/a; return new Complex(re*rec, im*rec);                //else, multiply each component by 1/a
 	}
 	/**
 	 * Divides by imaginary number
@@ -491,8 +510,8 @@ public class Complex extends Mafs { //this object represents a complex number.
 	 * @return the quotient
 	 */
 	public Complex divI(double a) {
-		if(Math.abs(a)<=5.562684646268E-309D) { return new Complex(im/a, -re/a); } //for small a, we divide each component by a
-		double rec=1.0D/a; return new Complex(im*rec, -re*rec);                    //else, multiply each component by 1/a
+		if(Math.abs(a)<Double.MIN_NORMAL) { return new Complex(im/a, -re/a); } //for subnormal a, we divide each component by a
+		double rec=1.0D/a; return new Complex(im*rec, -re*rec);                //else, multiply each component by 1/a
 	}
 	
 	//assign equals
@@ -583,7 +602,10 @@ public class Complex extends Mafs { //this object represents a complex number.
 	 * @param a the number we divide by (or divisor)
 	 * @return the quotient
 	 */
-	public Complex diveq(Complex a) { return muleq(a.inv()); } // /=
+	public Complex diveq(Complex a) { // /=
+		if(a.lazyabs()<Double.MIN_NORMAL) { return scalbeq(512).muleq(a.scalb(512).inv()); } //a is subnormal: multiply dividend & divisor by 2^512
+		return muleq(a.inv()); //otherwise, just multiply by the inverse
+	}
 	/**
 	 * Divide-equals x+yi
 	 * @param x divisor's real part
@@ -597,7 +619,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 	 * @return quotient
 	 */
 	public Complex diveq(double a) {
-		if(Math.abs(a)<=5.562684646268E-309D) { re/=a; im/=a; return this; }
+		if(Math.abs(a)<=Double.MIN_NORMAL) { re/=a; im/=a; return this; }
 		return muleq(1.0D/a);
 	}
 	/**
@@ -606,7 +628,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 	 * @return quotient
 	 */
 	public Complex diveqI(double a) {
-		if(Math.abs(a)<=5.562684646268E-309D) { set(im/a,-re/a); return this; }
+		if(Math.abs(a)<=Double.MIN_NORMAL) { set(im/a,-re/a); return this; }
 		return muleqI(-1.0D/a);
 	}
 	
@@ -656,6 +678,24 @@ public class Complex extends Mafs { //this object represents a complex number.
 	 */
 	public Complex diveqI() { set( im, -re); return this; } // /= i
 	
+	/**
+	 * Multiplies by 2^scaleFactor
+	 * @param scaleFactor the power of 2
+	 * @return the product with the binary exponent
+	 */
+	public Complex scalb(int scaleFactor) {
+		return new Complex(Math.scalb(re,scaleFactor),Math.scalb(im,scaleFactor));
+	}
+	
+	/**
+	 * Multiply-equals by 2^scaleFactor
+	 * @param scaleFactor the power of 2
+	 * @return the product with the binary exponent
+	 */
+	public Complex scalbeq(int scaleFactor) {
+		re = Math.scalb(re,scaleFactor); im = Math.scalb(im,scaleFactor); return this;
+	}
+	
 /////////////////////////////////////// COMPLEX PARTS ////////////////////////////////////////////////////
 	
 	/** Gets the real part.
@@ -678,12 +718,12 @@ public class Complex extends Mafs { //this object represents a complex number.
 	public double abs()  {                       //absolute value
 		if(im==0) { return Math.abs(re); } //if it's real, return abs(Re(x))
 		if(re==0) { return Math.abs(im); } //if it's imaginary, return abs(Im(x))
-		if(isInf()) { return INF; }
+		if(isInf()) { return INF; } //if infinite, return infinity
 		
-		double L=lazyabs();                    //take lazy abs for a quick sense of scale
-		if(L<=1.055E-154D || L>=9.481E+153D) { //absolute square overflows/underflows:
-			return div(L).abs()*L;             //divide by L, take absolute value, multiply back by L
-		}
+		double l=lazyabs();                    //take lazy abs for a quick sense of scale
+		if(l<1.4916681462400413E-154D) { return Math.scalb(scalb( 1022).abs(),-1022); } //absolute square underflows (l<2^-511): *2^1022, abs, /2^1022
+		if(l>=9.480751908109177E+153D) { return Math.scalb(scalb(-1022).abs(), 1022); } //absolute square underflows (l>=2^511.5): /2^1022, abs, *2^1022
+		
 		return Math.sqrt(absq()); //general case: return the square root of the absolute square
 	}
 	
@@ -722,14 +762,17 @@ public class Complex extends Mafs { //this object represents a complex number.
 		if(re==0)   { return new Complex(0,-1.0/im); } //imaginary number: return -i/(imag part)
 		if(isInf()) { return new Complex();          } //infinite  number: return 0
 		
-		double L=lazyabs();                    //take lazy abs for a quick sense of scale
+		double l=lazyabs();                    //take lazy abs for a quick sense of scale
 		
-		if(L<=1.055E-154D || L>=9.481E+153D) {                 //absolute square overflows/underflows:
-			if(L<=5.563E-309D) { return div(L).inv().div(L);   } //divide by L, invert, divide by L again
-			double k=1.0/L;      return mul(k).inv().muleq(k);   //if L > 2^-1024, solve 1/L beforehand to save on divisions
-		}
-		double inv = 1.0/absq();            //compute the reciprocal of the absolute square
+		if(l<1.4916681462400413E-154D) { return scalb( 1022).inv().scalb( 1022); } //absolute square underflows: *2^1022, invert, *2^1022 again
+		if(l>=9.480751908109177E+153D) { return scalb(-1022).inv().scalb(-1022); } //absolute square overflows: *2^-1022, invert, *2^-1022 again
+		
+		double inv = 1d/absq();             //compute the reciprocal of the absolute square
 		return new Complex(re*inv,-im*inv); //general case: return the conjugate over the absolute square
+		
+		//Complex res = new Complex(re*inv,-im*inv);        //this would be used if you wanted to perform one iteration of Newton-Raphson
+		//res.addeq(mul(res).negeq().addeq(1).muleq(res));
+		//return res;
 	}
 	
 	/**
@@ -740,7 +783,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 	/**
 	 * Cube.  Multiplication of a number by its square. 
 	 * @return the cube */
-	public Complex cub() { return mul(sq());                            } //z³
+	public Complex cub() { return mul(sq());                                        } //z³
 	
 	/**
 	 * Square root.  More specifically, the principal square root, whichever of the two square roots has the largest real part.
@@ -750,11 +793,12 @@ public class Complex extends Mafs { //this object represents a complex number.
 	public Complex sqrt() { //√(z)
 		
 		if(equals(0)) { return new Complex(); } //special case: √(0)=0
-		if(isInf()) {                                                             		                 //special case: infinite input
-			if(Math.abs(im)!=INF) { return re==INF ? new Complex(INF) : new Complex(0,im>=0?INF:-INF); } //non-inf imag part: return either ∞ or ±∞i
-			return new Complex(INF,im);                                           		                 //otherwise, reutrn ∞±∞i
+		if(isInf()) {                                                             		                   //special case: infinite input
+			if(Double.isFinite(im)) { return re==INF ? new Complex(INF) : new Complex(0,im>=0?INF:-INF); } //non-inf imag part: return either ∞ or ±∞i
+			return new Complex(INF,im);                                           		                   //otherwise, reutrn ∞±∞i
 		}
 		if(2*Math.abs(re)+Math.abs(im)==INF) { return mul(0.25D).sqrt().muleq(2D); } //special case: |z|+|x|=Overflow, return √(z/4)*2
+		//2|x|+|y|=2^1024 is the diamond of maximum area such that all z such that |z|+|x| are outside that diamond. I just figured it'd make things easier.
 		
 		//the formula for √(z) = √((|z|+x)/2) + sgn(y)√((|z|-x)/2)i    (where z = x + yi)
 		//since √((|z|+x)/2) * sgn(y)√((|z|-x)/2) = y/2, we'll just find one sqrt & use division to find the other
@@ -774,9 +818,9 @@ public class Complex extends Mafs { //this object represents a complex number.
 	public Complex cbrt() { //cube root of complex z
 		if(im==0 && (cbrt_Option||re>=0)) { return new Complex(Math.cbrt(re)); } //z is real: return cbrt(re(z)) (we may or may not exclude negatives)
 		
-		if(re==-INF)             { return new Complex(INF,im>=0?INF:-INF);         } //special case : -∞+something*i
-		if(isInf())              { return new Complex(INF,Math.abs(im)==INF?im:0); } //special case : something else infinite
-		if(lazyabs()>1.271E308D) { return mul(0.125D).cbrt().muleq(2D);            } //|z| overflows: return 2cbrt(z/8)
+		if(re==-INF)                           { return new Complex(INF,im>=0?INF:-INF);             } //special case : -∞+something*i
+		if(isInf())                            { return new Complex(INF,Double.isInfinite(im)?im:0); } //special case : something else infinite
+		if(lazyabs()>=1.2711610061536464E308D) { return mul(0.125D).cbrt().muleq(2D);                } //|z| overflows (L>=2^1023.5): return 2cbrt(z/8)
 		
 		double ang = arg()/3;                           //compute arg(z)/3
 		double mag = Math.cbrt(abs());                  //compute cbrt(|z|)
@@ -788,9 +832,10 @@ public class Complex extends Mafs { //this object represents a complex number.
 	 * @return the exponential
 	 */
 	public Complex exp() { //e^z
-		if(im==0) { return new Complex(Math.exp(re));                  }   //real number : return e^(real part)
-		if(re==0) { return new Complex(cos(im),sin(im));               }   //imag number : return cos(imag)+sin(imag)*i
-		if(re>709.78 && re<710.13) { return sub(LOG2).exp().muleq(2D); }   //large real part: subtract ln(2), take exponent, multiply by 2
+		if(im==0) { return new Complex(Math.exp(re));    }   //real number : return e^(real part)
+		if(re==0) { return new Complex(cos(im),sin(im)); }   //imag number : return cos(imag)+sin(imag)*i
+		if(re>=709.782712893384d && re<710.1292864836639d) { return sub(LOG2).exp().muleq(2D); }   //large real part: subtract ln(2), take exponent, multiply by 2
+		if(re<-744.4400719213812d)                         { return new Complex();             }   //large negative real part: return 0
 		
 		double exp = Math.exp(re);                   //compute exp of real part
 		return new Complex(exp*cos(im),exp*sin(im)); //return e^(real)*(cos(imag)+sin(imag)*i)
@@ -806,10 +851,10 @@ public class Complex extends Mafs { //this object represents a complex number.
 		if(re==0||im==0) { return new Complex(Math.log(abs()), arg()); } //real/imaginary number: return ln|z|+arg(z)i
 		if(isInf())      { return new Complex(INF, arg());             } //infinite number: return ∞+arg(z)i
 		
-		double L=lazyabs();                         //take lazy abs for a quick sense of scale
-		if(L<=1.055E-154D || L>=9.481E+153D) {      //absolute square overflows/underflows:
-			return div(L).log().addeq(Math.log(L)); //divide by L, take the log, and add back ln(L)
-		}
+		double l=lazyabs();                         //take lazy abs for a quick sense of scale
+		if(l<1.4916681462400413E-154D) { return scalb( 1022).log().subeq(1022*LOG2); } //absolute square underflows: *2^1022, find log, -ln(2^1022)
+		if(l>=9.480751908109177E+153D) { return scalb(-1022).log().addeq(1022*LOG2); } //absolute square  overflows: /2^1022, find log, +ln(2^1022)
+		
 		return new Complex(0.5D*Math.log(absq()), arg()); //general case: return ln(|z|²)/2+arg(z)i
 	}
 	
@@ -830,7 +875,10 @@ public class Complex extends Mafs { //this object represents a complex number.
 		
 		if(im==0) { return new Complex(pow(re,a)); } //input is real: use the other implementation for doubles (results in ~1/4 the # of multiplications)
 		
-		if(a<0)  { return inv().pow(-a); } //a is negative: return (1/z)^(-a)
+		if(a==Integer.MIN_VALUE) { return inv().pow(0x80000000).sq(); } //special case: exponent is minimum integer, raise to the power of -2^30, then square result.
+		//NOTE: without the above code, raising a number to the power of -2^31 would result in a stack overflow, since a would be repeatedly negated (to no effect) and z would be repeatedly inverted
+		
+		if(a<0) { return inv().pow(-a); } //a is negative: return (1/z)^(-a)
 		//general case:
 		Complex ans=new Complex(1);     //return value: z^a (init to 1 in case a==0)
 		int ex=a;                       //copy of a
@@ -861,10 +909,10 @@ public class Complex extends Mafs { //this object represents a complex number.
 		if(im==0 && (re>=0||a%1==0))          { return new Complex(Math.pow(re,a)); } //if the base is real and non-negative, or it's negative but the exponent is an integer, we'll just use the built in power function 
 		
 		double mag;                                   //compute |z|^a
-		double L=lazyabs();                           //use lazy absolute value for a sense of scale
-		if     (L>=1.05476867E-154D && L<=9.48075190E+153D) { mag=Math.pow(absq(),0.5*a); } //if within range, take (|z|²)^(a/2)
-		else if(L>=7.86682407E-309D && L<=1.27116100E+308D) { mag=Math.pow(abs() ,    a); } //if within another range, take |z|^a
-		else                                   { return div(L).pow(a).mul(Math.pow(L,a)); } //if outside both ranges, divide by L, raise to a-th power, mult by L^a
+		double l=lazyabs();                           //use lazy absolute value for a sense of scale
+		if     (l>=1.4916681462400413E-154D && l<9.480751908109177E+153D) { mag=Math.pow(absq(),0.5*a); } //if within range, take (|z|²)^(a/2)
+		else if(l>=Double.MIN_NORMAL        && l<1.2711610061536464E308D) { mag=Math.pow(abs (),    a); } //if within another range, take |z|^a
+		else                                                 { return div(l).pow(a).mul(Math.pow(l,a)); } //if outside both ranges, divide by l, raise to a-th power, mult by l^a
 		
 		double arg = arg();                                //compute the argument
 		return new Complex(mag*cos(a*arg),mag*sin(a*arg)); //return complex number with magnitude |z|^a & angle a*θ
@@ -877,7 +925,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 	 * @return the result
 	 */
 	public Complex pow(Complex a) {              //complex z ^ complex a
-		if(equals(Math.E)) { return a.exp();   } //z==e        : return e^a
+		if(equals(Math.E)) { return a.exp();   } //z==e        : return e^a (just in case someone feels like doing exp this way)
 		if(a.im==0)        { return pow(a.re); } //a is real   : return complex z ^ double a.re
 		return log().muleq(a).exp();             //general case: return e to the power of the log times a
 	}
@@ -938,12 +986,23 @@ public class Complex extends Mafs { //this object represents a complex number.
 		double[] sinhcosh=fsinhcosh(im);                   //compute sinh & cosh of imag part
 		return new Complex(sin(re)*sinhcosh[1],cos(re)*sinhcosh[0]); //sin(x+yi) = sin(x)cosh(y)+cos(x)sinh(y)i
 	}
+	/** Complex sine and cosine
+	 * @return sine and cosine */
+	public Complex[] fsincos() {
+		if(im==0) { return new Complex[] {new Complex(sin(re)),new Complex(cos(re))}; }
+		if(re==0) { double[] sc=fsinhcosh(im); return new Complex[] {new Complex(0,sc[0]),new Complex(sc[1])}; }
+		
+		double sin=sin(re), cos=cos(re);
+		double sinhcosh[] = fsinhcosh(im);
+		return new Complex[] {new Complex(sin*sinhcosh[1],cos(re)*sinhcosh[0]), new Complex(cos*sinhcosh[1],-sin*sinhcosh[0])};
+	}
 	/** Complex tangent
 	 * @return the tangent*/
 	public Complex tan() {                                                        //tan
-		if(im==0) 	 { return new Complex(tan(re));          } //real input: return tan
-		if(re==0)    { return new Complex(0,Math.tanh(im));  } //imag input: return tan*i
-		if(Math.abs(im)>20) { return new Complex(0,sgn(im)); } //large input: return +-1
+		if(im==0) 	 { return new Complex(tan(re));         } //real input: return tan
+		if(re==0)    { return new Complex(0,Math.tanh(im)); } //imag input: return tan*i
+		
+		if(Math.abs(im)>18.7149738751185d) { return new Complex(0,sgn(im)); } //large input: return +-1
 		
 		double sin=sin(2*re), cos=cos(2*re); //compute sin  & cos  of twice the real part
 		double[] sinhcosh=fsinhcosh(2*im);   //compute sinh & cosh of twice the imag part
@@ -968,11 +1027,11 @@ public class Complex extends Mafs { //this object represents a complex number.
 	public Complex tanh() { return mulI().tan().diveqI(); } //tanh
 	
 	/** Secant
-	 * @return secant*/    public Complex sec () { return cos ().inv(); } //sec
+	 * @return secant*/    public Complex sec () { return cos().inv(); } //sec
 	/** Cosecant
-	 * @return cosecant*/  public Complex csc () { return sin ().inv(); } //csc
+	 * @return cosecant*/  public Complex csc () { return sin().inv(); } //csc
 	/** Cotangent
-	 * @return cotangent*/ public Complex cot () { return tan ().inv(); } //cot
+	 * @return cotangent*/ public Complex cot () { return tan().inv(); } //cot
 	
 	/** Hyperbolic secant
 	 * @return hyperbolic secant*/    public Complex sech() { return cosh().inv(); } //sech

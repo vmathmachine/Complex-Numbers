@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * A collection of utilities for complex numbers that can't be called as <code>Complex</code> instance methods.
  * 
  * @author Math Machine
- * @version 1.0.2
+ * @version 1.1.0
  */
 
 public class Cpx extends Mafs {
@@ -486,7 +486,7 @@ public class Cpx extends Mafs {
 	
 	/**
 	 * The Gudermannian function.  It's a useful function such that the sinh, cosh, tanh, sech, csch, and coth of the input is equal to
-	 * the tan, sec, sin, cos, cot, and csc (respectively) of the output.  This can be handy when evaluating certain integrals.  It's
+	 * the tan, sec, sin, cos, cot, and csc (respectively) of the output. This can be handy when evaluating certain integrals. It's
 	 * also equal to the antiderivative of the hyperbolic secant (sech) function.
 	 * @param z complex input
 	 * @return Gudermannian function
@@ -494,8 +494,8 @@ public class Cpx extends Mafs {
 	public static Complex gd(Complex z) { //Gudermannian function
 		//first, the special cases. If the input is too close to one of the poles, we have to use an approximation
 		Complex z2 = z.mod_v2(iTimes(2*Math.PI)); //take a modulo with 2πi
-		if(z2.subI(HALFPI).lazyabs()<1E-4) { return ln(z.mulI().addeq(HALFPI)).diveqI().addeqI(LOG2); } //approximation with logarithm
-		if(z2.addI(HALFPI).lazyabs()<1E-4) { return ln(z.divI().addeq(HALFPI)).muleqI().subeqI(LOG2); } //approximation with logarithm
+		if(z2.subI(HALFPI).lazyabs()<1E-4) { return ln(z2.mulI().addeq(HALFPI)).diveqI().addeqI(LOG2); } //approximation with logarithm
+		if(z2.addI(HALFPI).lazyabs()<1E-4) { return ln(z2.divI().addeq(HALFPI)).muleqI().subeqI(LOG2); } //approximation with logarithm
 		
 		double[] sinhcosh = fsinhcosh(z.re);     //compute the cosh & sinh of the real part
 		double cos = cos(z.im), sin = sin(z.im); //compute the cos & sin of the imaginary part
@@ -595,33 +595,26 @@ public class Cpx extends Mafs {
 ///////////////////////////// ADDING LOGARITHMS //////////////////////////////////
 	
 	/**
-	 * Wrapper class used to hold integers so they can be passed by reference
-	 * 
-	 * @author Math Machine
-	 */
-	private static class Wrapper { int in; Wrapper(int i) { in=i; } }
-	
-	/**
 	 * Logarithm offset: Returns ( (sum of ln(each input)) - (ln(product of each input)) ) / (2πi).
 	 * 
 	 * You see, if you add together the logarithms of several positive real numbers, that's the same as multiplying those numbers
-	 * together and taking the logarithm of their product.  However, the same can't be said for negative or complex numbers.  Technically,
-	 * the sum will be <em>a</em> logarithm of the product, but it won't necessarily be the principal value of that logarithm.  However,
+	 * together and taking the logarithm of their product. However, the same can't be said for negative or complex numbers. Technically,
+	 * the sum will be <em>a</em> logarithm of the product, but it won't necessarily be the principal value of that logarithm. However,
 	 * a fundamental rule of complex numbers is that all non-zero numbers have an infinite number of natural logarithms, and if you
-	 * subtract any two of those logarithms, you'll get an integer multiple of 2πi.  This function simply answers the question "what is
-	 * that integer multiple?"  And it does so without performing any logarithms.
+	 * subtract any two of those logarithms, you'll get an integer multiple of 2πi. This function simply answers the question "what is
+	 * that integer multiple?" And it does so without performing any logarithms.
 	 * @param z each complex input
 	 * @return the logarithm offset
 	 */
 	public static int logOffset(Complex... z) { //the difference of the sum of logs and the log of the product (over 2πi)
 		ArrayList<Complex> inp = new ArrayList<Complex>();
 		for(Complex c : z) { inp.add(c); }                   //convert array to arraylist
-		return recursiveLogOffset(new Wrapper(0),one(),inp); //use private function to compute the offset
+		return recursiveLogOffset(new int[1],one(),inp); //use private function to compute the offset
 	}
 	
 	/**
-	 * Returns the sum of the logarithms of each complex input.  It does this by computing the product, taking the logarithm, adding
-	 * 2πi times the log offset, and performing some overflow/underflow corrections along the way.  Only one logarithm is needed to
+	 * Returns the sum of the logarithms of each complex input. It does this by computing the product, taking the logarithm, adding
+	 * 2πi times the log offset, and performing some overflow/underflow corrections along the way. Only one logarithm is needed to
 	 * calculate this.
 	 * @param z each complex input
 	 * @return the sum of their logarithms
@@ -630,13 +623,13 @@ public class Cpx extends Mafs {
 		ArrayList<Complex> inp = new ArrayList<Complex>();
 		for(Complex c : z) { inp.add(c); } //convert array to arraylist
 		
-		Complex prod = one();            //initialize product
-		Wrapper change = new Wrapper(0); //initialize change
+		Complex prod = one();      //initialize product
+		int[] change = new int[1]; //initialize change
 		int offset = recursiveLogOffset(change,prod,inp); //compute the log offset (as well as the product & change)
 		
-		Complex ln = ln(prod);                          	       //find the logarithm of the product
-		if(change.in!=0) { ln.addeq(change.in*Math.log(1E300D)); } //make an adjustment for the number of times we overflowed / underflowed
-		ln.addeqI(2*Math.PI*offset);                        	   //make another adjustment for the number of times we went around in a circle
+		Complex ln = ln(prod);                                //find the logarithm of the product
+		if(change[0]!=0) { ln.addeq(change[0]*(1022*LOG2)); } //make an adjustment for the number of times we overflowed / underflowed
+		ln.addeqI(2*Math.PI*offset);                          //make another adjustment for the number of times we went around in a circle
 		
 		return ln; //return the result
 	}
@@ -644,26 +637,26 @@ public class Cpx extends Mafs {
 	/**
 	 * Complicated.
 	 * For a set of complex inputs, this gives us the logarithm offset, the product of the inputs, and the number of times we overflowed
-	 * minus the number of times we underflowed while performing this calculation.  This function is private because the wrapper class
-	 * is private and because the information we gain from it has to be interpreted properly
+	 * minus the number of times we underflowed while performing this calculation. This function is private because the information we gain
+	 * from it has to be interpreted properly
 	 * 
 	 * @param change the # of times we overflowed - the # of times we underflowed (updated at the end of each iteration)
 	 * @param prod the product (adjusted for overflow / underflow)
 	 * @param z the set of complex inputs
 	 * @return the logarithm offset of those inputs
 	 */
-	private static int recursiveLogOffset(Wrapper change, Complex prod, ArrayList<Complex> z) {
+	private static int recursiveLogOffset(int[] change, Complex prod, ArrayList<Complex> z) {
 		switch(z.size()) {        //return depends on # of inputs
-		case 0: case 1: return 0; //0 or 1 inputs: no difference
+		case 1: prod.set(z.get(0)); case 0: return 0; //0 or 1 inputs: no difference (but in the case of 1, we should update the product)
 		case 2:
 			Complex prod2 = z.get(0).mul(z.get(1)); //compute the product
-			if(prod2.equals(0))    { prod.set(z.get(0).mul( 1E300D).mul(z.get(1))); change.in--; } //underflow: grow, record
-			else if(prod2.isInf()) { prod.set(z.get(0).mul(1E-300D).mul(z.get(1))); change.in++; } //overflow: shrink, record
+			if(prod2.equals(0))    { prod.set(z.get(0).scalb( 1022).mul(z.get(1))); --change[0]; } //underflow: grow, record
+			else if(prod2.isInf()) { prod.set(z.get(0).scalb(-1022).mul(z.get(1))); ++change[0]; } //overflow: shrink, record
 			else { prod.set(prod2); }                                                              //else: set
 			
 			boolean side1 = (z.get(0).im>0 || z.get(0).im==0&&z.get(0).re<0), //find which side of the x-axis z[0] is on,
 					side2 = (z.get(1).im>0 || z.get(1).im==0&&z.get(1).re<0), //which side z[1] is on,
-					side3 = (prod.im>0 || prod.im==0&&prod.re<0);             //and which side their product is on
+					side3 = (    prod.im>0 ||     prod.im==0&&    prod.re<0); //and which side their product is on
 			if( side1 &&  side2 && !side3) { return  1; } //if the first two are on the same side,
 			if(!side1 && !side2 &&  side3) { return -1; } //but the product isn't, record offset
 			return 0;                                     //otherwise, no offset
@@ -671,15 +664,15 @@ public class Cpx extends Mafs {
 			Complex z1=z.remove(z.size()-1);               //remove the last term
 			int sum = recursiveLogOffset(change, prod, z); //perform the function on our reduced list (changing change & prod and finding the sum)
 			
-			side1 = (z1.im>0 || z1.im==0&&z1.re<0);       //find which side the last term is on
+			side1 = (  z1.im>0 ||   z1.im==0&&  z1.re<0); //find which side the last term is on
 			side2 = (prod.im>0 || prod.im==0&&prod.re<0); //find which side the product is on
 			
 			prod2 = prod.mul(z1); //compute product
-			if(prod2.equals(0))    { prod.set(z.get(0).mul( 1E300D).mul(z.get(1))); change.in--; } //underflow adjustment
-			else if(prod2.isInf()) { prod.set(z.get(0).mul(1E-300D).mul(z.get(1))); change.in++; } //overflow adjustment
+			if(prod2.equals(0))    { prod.set(z.get(0).scalb( 1022).mul(z.get(1))); --change[0]; } //underflow adjustment
+			else if(prod2.isInf()) { prod.set(z.get(0).scalb(-1022).mul(z.get(1))); ++change[0]; } //overflow adjustment
 			else { prod.set(prod2); }                                                              //set
 			
-			side3 = (prod.im>0 || prod.im==0&&prod.re<0); //find which side the product is on
+			side3 = (prod.im>0 || prod.im==0 && prod.re<0); //find which side the product is on
 			
 			if( side1 &&  side2 && !side3) { return sum+1; } //if the first two are on the same side, but the last isn't,
 			if(!side1 && !side2 &&  side3) { return sum-1; } //record offset.  Otherwise, offset = 0

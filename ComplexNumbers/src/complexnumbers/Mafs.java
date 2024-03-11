@@ -5,7 +5,7 @@ package complexnumbers;
  * This class is used to hold certain mathematical constants, operations, and functions that will be useful for the <code>Complex</code> class.
  * 
  * @author Math Machine
- * @version 1.0.2
+ * @version 1.1.0
  */
 
 public class Mafs {
@@ -17,7 +17,7 @@ public class Mafs {
 	final public static double HALFPI=1.57079632679489662D;
 	/** √(2) */
 	final public static double ROOT2=1.41421356237309505D;
-	/** √(π)/2.  Will be used in calculation of the <code>erf</code> function */
+	/** √(π)/2.  Is used in calculation of the <code>erf</code> function */
 	final public static double ROOTPI2=0.886226925452758D;
 	/** ln(2) */
 	final public static double LOG2=0.6931471805599453D;
@@ -120,15 +120,48 @@ public class Mafs {
 	////////////////// MATH FUNCTIONS ////////////////////
 	
 	/**
-	 * The factorial of an integer, represented with 64-bit longs. (returns 2^63-1 if it overflows)
+	 * The factorial of an integer, represented as a double-precision floating point
 	 * @param n input
 	 * @return n!
 	 */
-	public static long factorial(int n) { //computes the factorial
-		if(n<0 || n>=21) { return Long.MAX_VALUE; } //outside the range [0,20], n! overflows
-		long prod = 1L;                    //initialize product
+	public static double factorial(int n) { //computes the factorial
+		if(n<0) { return (n&1)==0 ? -INF : INF; }
+		if(n>170) { return INF; }
+		
+		double prod = 1;                   //initialize product
 		for(int k=2;k<=n;k++) { prod*=k; } //multiply all numbers from [2,n]
 		return prod;                       //return result
+	}
+	
+	/**
+	 * The square of a double.
+	 * @param d input
+	 * @return square
+	 */
+	public static double sq(double d) { return d*d; }
+	
+	/**
+	 * The cube of a double.
+	 * @param d input
+	 * @return cube
+	 */
+	public static double cub(double d) { return d*d*d; }
+	
+	/**
+	 * The binomial coefficients function
+	 * @param n the number of elements in the set
+	 * @param r the number of elements you choose from the set
+	 * @return the number of unique combinations of unordered elements, n!/(r!(n-r)!)
+	 */
+	public static double nCr(int n, int r) {
+		if((r<<1)<n) { return nCr(n,n-r); } //nCr = nC(n-r), so choose the r with the least mults
+		
+		if(n>=0 ? r<0 : r>n) { return 0; } //if r is negative & n isn't, or r is greater than n and n is negative, the answer is 0
+		
+		double comb = 1;                     //initialize product to 1
+		for(int k=r+1;k<=n;k++) { comb*=k; } //multiply all #s (r,n]
+		comb /= factorial(n-r);              //divide by (n-r)!
+		return comb;                         //return result
 	}
 	
 	/**
@@ -139,6 +172,9 @@ public class Mafs {
 	 * @return the base raised to the exponent
 	 */
 	public static double pow(double d, int a) { //compute double d ^ integer a (exponentiation by squaring)
+		if(a==Integer.MIN_VALUE) { return sq(pow(1/d,0x80000000)); } //special case: exponent is minimum integer, raise to the power of -2^30, then square result.
+		//NOTE: without the above code, raising a number to the power of -2^31 would result in a stack overflow, since a would be repeatedly negated (to no effect) and z would be repeatedly inverted
+		
 		if(a<0)  { return pow(1/d,-a); } //a is negative: return (1/d)^(-a)
 		                                 //general case:
 	
@@ -215,14 +251,14 @@ public class Mafs {
 	 * @return the tangent
 	 */
 	public static double tan(double d) { //computes the tangent without roundoff errors
-		double mod = d%Math.PI;
+		final double mod = d%Math.PI;
 		if(mod==0)                { return 0;   } //if a multiple of π, return 0
 		if(Math.abs(mod)==HALFPI) { return INF; } //if an odd multiple of π/2, return ∞
 		return Math.tan(d);                       //return tangent
 	}
 	
 	/**
-	 * Hyperbolic sine & cosine both computed simultaneously.  The name is inspired by the <code>FSINCOS</code> instruction used in
+	 * Hyperbolic sine & cosine both computed simultaneously. The name is inspired by the <code>FSINCOS</code> instruction used in
 	 * assembly code, which is slower than <code>cos</code> and slower than <code>sin</code>, but faster than doing them both.
 	 * This function calculates the exponential and its reciprocal, then uses arithmetic to find the <code>sinh</code> and <code>cosh</code>.
 	 * 
@@ -236,5 +272,18 @@ public class Mafs {
 		double part = Math.exp(d); //regular input: compute e^d
 		double inv  = 1.0D/part;   //and e^-d
 		return new double[] {0.5*(part-inv), 0.5*(part+inv)}; //return their sum & difference (over 2)
+	}
+	
+	/**
+	 * Sine & cosine both computed simultaneously. It performs about as well as taking them individually, but since we handle special cases for
+	 * multiples of π/2, it helps that we only have to compute the modulo once
+	 * @param d
+	 * @return
+	 */
+	public static double[] fsincos(double d) { //returns the sine & cosine, computed (almost) simultaneously
+		final double mod = d%Math.PI; //take the modulo WRT π
+		if(mod==0)                      { return new double[] {0,Math.cos(d)}; } //if a multiple of π, sine is 0
+		if(mod==HALFPI || mod==-HALFPI) { return new double[] {Math.sin(d),0}; } //if a half multiple of π, cosine is 0
+		return new double[] {Math.sin(d),Math.cos(d)}; //otherwise, just compute both of them
 	}
 }
