@@ -23,7 +23,7 @@ package complexnumbers;
  * @version 1.1.0
  */
 
-public class Complex extends Mafs { //this object represents a complex number.
+public class Complex extends Mafs implements Cloneable { //this object represents a complex number.
 	
 //////////////////////////////////////////////// ATTRIBUTES /////////////////////////////////////////
 	
@@ -133,12 +133,6 @@ public class Complex extends Mafs { //this object represents a complex number.
 	public void setArg(double a) { double abs = abs(); set(abs*cos(a), abs*sin(a)); }
 	
 	/**
-	 * Tests for equality between two <code>Complex</code> objects. Returns true if their components are equal or if they're both NaN.
-	 * @param z the complex number we test for equality with
-	 * @return  whether or not they equal
-	 */
-	public boolean equals(Complex z) { return (re==z.re && im==z.im) || (isNaN() && z.isNaN()); }
-	/**
 	 * Tests for equality with x+yi.
 	 * @param x the real part
 	 * @param y the imaginary part
@@ -169,9 +163,12 @@ public class Complex extends Mafs { //this object represents a complex number.
 	/** Returns true if the object is a <code>Complex</code> with the same value.
 	 * @return true if they equal*/
 	@Override
-	public boolean equals(Object o) { //test for equality with another object
-		if(o instanceof Complex) { return equals((Complex)o); }
-		return false;
+	public boolean equals(final Object o) { //test for equality with another object
+		if(o instanceof Complex) { //if complex:
+			Complex z = (Complex)o; //cast to complex
+			return re==z.re && im==z.im || isNaN() && z.isNaN(); //return true iff both components match, or they're both NaN
+		}
+		return false; //otherwise, return false
 	}
 	
 	/** Computes the hash code.
@@ -875,7 +872,7 @@ public class Complex extends Mafs { //this object represents a complex number.
 		
 		if(im==0) { return new Complex(pow(re,a)); } //input is real: use the other implementation for doubles (results in ~1/4 the # of multiplications)
 		
-		if(a==Integer.MIN_VALUE) { return inv().pow(0x80000000).sq(); } //special case: exponent is minimum integer, raise to the power of -2^30, then square result.
+		if(a==Integer.MIN_VALUE) { return inv().pow(0xC0000000).sq(); } //special case: exponent is minimum integer, raise to the power of -2^30, then square result.
 		//NOTE: without the above code, raising a number to the power of -2^31 would result in a stack overflow, since a would be repeatedly negated (to no effect) and z would be repeatedly inverted
 		
 		if(a<0) { return inv().pow(-a); } //a is negative: return (1/z)^(-a)

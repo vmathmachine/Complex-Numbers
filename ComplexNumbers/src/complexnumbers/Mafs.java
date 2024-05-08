@@ -172,7 +172,7 @@ public class Mafs {
 	 * @return the base raised to the exponent
 	 */
 	public static double pow(double d, int a) { //compute double d ^ integer a (exponentiation by squaring)
-		if(a==Integer.MIN_VALUE) { return sq(pow(1/d,0x80000000)); } //special case: exponent is minimum integer, raise to the power of -2^30, then square result.
+		if(a==Integer.MIN_VALUE) { return sq(pow(1/d,0xC0000000)); } //special case: exponent is minimum integer, raise to the power of -2^30, then square result.
 		//NOTE: without the above code, raising a number to the power of -2^31 would result in a stack overflow, since a would be repeatedly negated (to no effect) and z would be repeatedly inverted
 		
 		if(a<0)  { return pow(1/d,-a); } //a is negative: return (1/d)^(-a)

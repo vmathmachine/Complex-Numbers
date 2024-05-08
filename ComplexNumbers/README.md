@@ -32,7 +32,7 @@ Some of you probably already know this....I didn't.  So, I'm putting this down f
 # Details
 
 The Mafs class allows for several key math functionalities and variables that aren't provided by default.  It contains functions for converting doubles to strings, a function
-for modular exponentiation for doubles, the signum function, fast computation of sinh and cosh, round-off proof computation of sin and cos, and several fundamental math constants (such as ∞, π/2, and the Euler-Mascheroni constant).  If you think I'm missing anything, please tell me.
+for integer exponentiation for doubles, the signum function, fast computation of sinh and cosh, round-off proof computation of sin and cos, and several fundamental math constants (such as ∞, π/2, and the Euler-Mascheroni constant).  If you think I'm missing anything, please tell me.
 
 The Complex class, which extends the Mafs class, contains all the Complex Number functionality.  All instances of the Complex class have two attributes: re and im (real and imaginary
 parts, both doubles).  There are many functions to this class, anywhere from converting to a string, to creating a deep copy, to addition and subtraction, to taking the natural logarithm.
